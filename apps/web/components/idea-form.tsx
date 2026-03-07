@@ -7,85 +7,99 @@ import { createRun } from "@/lib/api";
 const DEMO_IDEAS = [
   "AI assistant that applies to jobs automatically",
   "AI mobile coding copilot for React Native teams",
-  "AI travel planner that coordinates bookings and itinerary changes"
+  "AI travel planner that coordinates bookings live",
 ];
 
 const SPONSORS = [
-  { name: "Google Gemini", dot: "#4285F4", emoji: "✦" },
-  { name: "Exa", dot: "#7c3aed", emoji: "🔍" },
-  { name: "Prefect", dot: "#22c55e", emoji: "⚡" },
-  { name: "Next.js", dot: "#ffffff", emoji: "▲" },
-  { name: "React Flow", dot: "#f59e0b", emoji: "🗺️" },
+  { name: "Google Gemini", color: "#4285F4" },
+  { name: "Exa", color: "#7c3aed" },
+  { name: "Prefect", color: "#22c55e" },
+  { name: "Next.js", color: "#ffffff" },
+  { name: "React Flow", color: "#f59e0b" },
 ];
 
 export function IdeaForm() {
   const router = useRouter();
   const [idea, setIdea] = useState(DEMO_IDEAS[0]);
   const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [liveMode, setLiveMode] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null); setBusy(true);
     try {
-      const response = await createRun(idea, !liveMode);
-      router.push(`/runs/${response.run_id}`);
+      const res = await createRun(idea, !liveMode);
+      router.push(`/runs/${res.run_id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create the run.");
     } finally {
-      setIsSubmitting(false);
+      setBusy(false);
     }
   }
 
   return (
-    <form className="surface input-shell" onSubmit={handleSubmit}>
-      <label className="panel-title" htmlFor="idea">Startup idea</label>
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)] p-6 flex flex-col gap-4"
+    >
+      <label className="text-[10px] uppercase tracking-[0.12em] text-muted font-semibold" htmlFor="idea">
+        Startup idea
+      </label>
+
       <textarea
         id="idea"
-        className="textarea"
+        rows={5}
         value={idea}
         onChange={(e) => setIdea(e.target.value)}
         placeholder="Describe the software or AI startup idea you want to map..."
-        rows={5}
+        className="w-full rounded-xl border border-white/[0.12] bg-[rgba(5,10,22,0.8)] text-slate-100 placeholder-muted/50 p-4 text-sm resize-y focus:outline-none focus:border-sky-500/40 transition-colors"
       />
 
-      <div className="button-row">
-        <button className="primary-button" type="submit" disabled={isSubmitting || idea.trim().length < 10}>
-          {isSubmitting ? "Starting analysis..." : "Analyze →"}
+      <div className="flex items-center justify-between gap-3">
+        <button
+          type="submit"
+          disabled={busy || idea.trim().length < 10}
+          className="rounded-full px-5 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 text-[#16120a] font-bold text-sm shadow-[0_4px_18px_rgba(245,158,11,0.35)] hover:opacity-90 hover:-translate-y-px transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+        >
+          {busy ? "Starting..." : "Analyze →"}
         </button>
-        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: "0.8rem", color: "var(--muted)" }}>
+
+        <label className="flex items-center gap-2 cursor-pointer text-[11px] text-muted select-none">
           <input
             type="checkbox"
             checked={liveMode}
             onChange={(e) => setLiveMode(e.target.checked)}
-            style={{ accentColor: "var(--blue)", width: 14, height: 14 }}
+            className="accent-sky-500 w-3.5 h-3.5"
           />
           Live AI mode
         </label>
       </div>
 
-      <div className="chip-row">
+      {/* Quick pick chips */}
+      <div className="flex flex-wrap gap-2">
         {DEMO_IDEAS.map((d) => (
-          <button key={d} className="prompt-chip" type="button" onClick={() => setIdea(d)}>{d}</button>
+          <button key={d} type="button" onClick={() => setIdea(d)}
+            className="text-[11px] rounded-full px-3 py-1.5 border border-amber-500/20 bg-amber-500/8 text-slate-300 hover:border-amber-500/40 hover:bg-amber-500/12 transition-all">
+            {d}
+          </button>
         ))}
       </div>
 
       {!liveMode && (
-        <p style={{ fontSize: "0.75rem", color: "var(--muted)" }}>
-          Demo mode uses rich fixture data and walks the full run lifecycle instantly. Enable Live AI mode to use real Gemini + Exa.
+        <p className="text-[11px] text-muted">
+          Demo mode uses rich fixture data for an instant full run. Enable Live AI to call Gemini + Exa.
         </p>
       )}
 
-      {error ? <p className="alert">{error}</p> : null}
+      {error && <p className="text-[12px] text-rose-300 border border-rose-500/30 bg-rose-500/10 rounded-xl px-4 py-3">{error}</p>}
 
-      {/* Powered By Sponsors */}
-      <div className="powered-by">
-        <span className="powered-by-label">Powered by</span>
+      {/* Sponsors */}
+      <div className="flex items-center flex-wrap gap-2 pt-1 border-t border-white/[0.06]">
+        <span className="text-[9px] uppercase tracking-[0.14em] text-muted mr-1">Powered by</span>
         {SPONSORS.map((s) => (
-          <span key={s.name} className="sponsor-chip">
-            <span className="sponsor-dot" style={{ background: s.dot }} />
+          <span key={s.name} className="inline-flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-full border border-white/[0.08] bg-white/[0.02] text-muted hover:border-sky-500/30 hover:text-slate-300 transition-all">
+            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: s.color }} />
             {s.name}
           </span>
         ))}
