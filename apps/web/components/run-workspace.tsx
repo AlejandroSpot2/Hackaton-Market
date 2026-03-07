@@ -43,7 +43,7 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
     let mounted = true;
     let intervalId: number | undefined;
 
-    async function pollRun() {
+    async function poll() {
       try {
         const nextSnapshot = await fetchRunSnapshot(runId);
 
@@ -79,8 +79,8 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
       }
     }
 
-    void pollRun();
-    intervalId = window.setInterval(pollRun, 2500);
+    void poll();
+    intervalId = window.setInterval(poll, 2500);
     return () => { mounted = false; if (intervalId) window.clearInterval(intervalId); };
   }, [runId]);
 
