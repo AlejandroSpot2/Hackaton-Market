@@ -1,8 +1,8 @@
-import { SummaryCardData } from "@/lib/types";
+import { SummaryCard as SummaryCardType } from "@/lib/types";
 
 interface SummaryCardProps {
   title: string;
-  card: SummaryCardData | null;
+  card: SummaryCardType | null;
   fallback: string;
 }
 

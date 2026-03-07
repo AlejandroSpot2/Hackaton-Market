@@ -54,12 +54,13 @@ def write_pulse(run_id: str, pulse_result) -> None:
 
 
 @task(name="write-complete")
-def write_complete(run_id: str, final_result) -> None:
+def write_complete(run_id: str, final_result, data_source: str = "demo") -> None:
     run_store.update(
         run_id,
         status="complete",
         progress_message="Market Atlas complete.",
         result=final_result,
+        data_source=data_source,
     )
 
 
@@ -73,7 +74,7 @@ def analyze_run_flow(run_id: str, idea: str, demo_mode: bool = True) -> None:
         time.sleep(1.5)
         _invoke(write_pulse, run_id, fixture_bundle.pulse_result)
         time.sleep(2.0)
-        _invoke(write_complete, run_id, fixture_bundle.final_result)
+        _invoke(write_complete, run_id, fixture_bundle.final_result, "demo")
         return
 
     # 2. Live Provider Branch
@@ -106,15 +107,15 @@ def analyze_run_flow(run_id: str, idea: str, demo_mode: bool = True) -> None:
         final_result.brutal_truth = phase2_data.brutal_truth
         final_result.opportunity = phase2_data.opportunity
         
-        _invoke(write_complete, run_id, final_result)
-        
+        _invoke(write_complete, run_id, final_result, "live")
+
     except Exception as exc:
         print(f"Live flow failed, falling back to demo fixture: {exc}")
         # Graceful fallback to fixtures so UI never breaks
         fixture_bundle = _invoke(select_fixture, idea)
         _invoke(write_pulse, run_id, fixture_bundle.pulse_result)
         # We write complete immediately because we are already delayed by the failure
-        _invoke(write_complete, run_id, fixture_bundle.final_result)
+        _invoke(write_complete, run_id, fixture_bundle.final_result, "fallback")
 
 
 def start_analysis_flow(run_id: str, idea: str, demo_mode: bool = True) -> None:
