@@ -1,4 +1,4 @@
-# Node / Next
+﻿# Node / Next
 **/node_modules/
 **/.next/
 **/dist/
@@ -8,6 +8,7 @@
 **/__pycache__/
 **/.pytest_cache/
 *.pyc
+pytest-cache-files-*/
 
 # Local env
 .env
@@ -24,5 +25,9 @@ Thumbs.db
 # Runtime data
 data/runs/*.json
 !data/runs/.gitkeep
+
 # Prefect
 .prefect/
+
+# Local agent scratch
+.codex_tmp/

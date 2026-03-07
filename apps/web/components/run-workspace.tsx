@@ -3,20 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { fetchRunResult, fetchRunStatus } from "@/lib/api";
-import { RunRecord, RunStatusResponse } from "@/lib/types";
 import { AtlasCanvas } from "@/components/atlas-canvas";
 import { DetailPanel } from "@/components/detail-panel";
-import { StatusStrip } from "@/components/status-strip";
-import { SummaryCard } from "@/components/summary-card";
+import { ExperimentalPrefabShell } from "@/components/experimental-prefab-shell";
+import { RunStatusShell } from "@/components/run-status-shell";
+import { RunSummaryShell } from "@/components/run-summary-shell";
+import { fetchRunSnapshot, RunSnapshot } from "@/lib/api";
+import { buildRunViewModel } from "@/lib/run-view-model";
 
 interface RunWorkspaceProps {
   runId: string;
 }
 
+const HERO_SIGILS = ["Atlas-first", "Pulse before synthesis", "Persistent run state"];
+
 export function RunWorkspace({ runId }: RunWorkspaceProps) {
-  const [statusData, setStatusData] = useState<RunStatusResponse | null>(null);
-  const [record, setRecord] = useState<RunRecord | null>(null);
+  const [snapshot, setSnapshot] = useState<RunSnapshot | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,32 +28,36 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
 
     async function pollRun() {
       try {
-        const [nextStatus, nextRecord] = await Promise.all([fetchRunStatus(runId), fetchRunResult(runId)]);
+        const nextSnapshot = await fetchRunSnapshot(runId);
+
         if (!mounted) {
           return;
         }
 
-        setStatusData(nextStatus);
-        setRecord(nextRecord);
+        setSnapshot(nextSnapshot);
         setError(null);
 
-        const nextNodes = nextRecord.result?.atlas.nodes ?? [];
-        if (nextNodes.length > 0) {
-          setSelectedNodeId((current) => {
-            if (current && nextNodes.some((node) => node.id === current)) {
-              return current;
-            }
-            return nextNodes[0].id;
-          });
-        }
+        const nextNodes = nextSnapshot.view.atlas?.nodes ?? [];
+        setSelectedNodeId((current) => {
+          if (nextNodes.length === 0) {
+            return null;
+          }
 
-        if ((nextStatus.status === "complete" || nextStatus.status === "failed") && intervalId) {
+          if (current && nextNodes.some((node) => node.id === current)) {
+            return current;
+          }
+
+          return nextNodes[0].id;
+        });
+
+        if ((nextSnapshot.statusData.status === "complete" || nextSnapshot.statusData.status === "failed") && intervalId) {
           window.clearInterval(intervalId);
         }
       } catch (pollError) {
         if (!mounted) {
           return;
         }
+
         setError(pollError instanceof Error ? pollError.message : "Could not load the run.");
       }
     }
@@ -69,106 +75,62 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
     };
   }, [runId]);
 
-  const result = record?.result ?? null;
-  const selectedNode = result?.atlas.nodes.find((node) => node.id === selectedNodeId) ?? null;
-  const selectedDetail = selectedNode ? result?.competitor_details[selectedNode.id] ?? null : null;
-  const status = statusData?.status ?? record?.status ?? "queued";
-  const progressMessage = statusData?.progress_message ?? record?.progress_message ?? null;
+  const view = snapshot?.view ?? buildRunViewModel({ runId, statusData: null, record: null });
+  const atlasNodes = view.atlas?.nodes ?? [];
+  const selectedNode = atlasNodes.find((node) => node.id === selectedNodeId) ?? null;
+  const selectedDetail = selectedNode ? view.competitorDetails[selectedNode.id] ?? null : null;
 
   return (
-    <div className="run-layout">
-      <section className="surface hero-card run-header">
-        <div>
+    <div className="run-layout run-layout--observatory">
+      <section className="surface hero-card run-header observatory-hero">
+        <div className="observatory-hero-copy">
           <p className="eyebrow">RealityCheck AI</p>
-          <h1>{record?.idea ?? "Preparing analysis..."}</h1>
-          <p className="muted">
-            Polling local run data for <span className="mono">{runId}</span>
+          <h1>{view.idea}</h1>
+          <p className="hero-copy compact">
+            The observatory stays atlas-first. The market pulse appears early, the codex keeps updating, and the explorable terrain remains the main event for <span className="mono">{runId}</span>.
           </p>
+          <div className="hero-sigils" aria-label="Product traits">
+            {HERO_SIGILS.map((sigil) => (
+              <span key={sigil} className="scene-pill">
+                {sigil}
+              </span>
+            ))}
+          </div>
         </div>
-        <Link className="back-link" href="/">
-          Analyze another idea
-        </Link>
+
+        <div className="run-header-actions">
+          <span className={`status-badge ${view.status}`}>{view.statusShell.label}</span>
+          <Link className="back-link" href="/">
+            Analyze another idea
+          </Link>
+        </div>
       </section>
 
-      <StatusStrip status={status} progressMessage={progressMessage} />
+      <section className="surface observatory-shell">
+        <ExperimentalPrefabShell
+          section="status"
+          view={view}
+          error={error}
+          fallback={<RunStatusShell error={error} view={view} />}
+        />
 
-      {error ? <p className="alert">{error}</p> : null}
-
-      <div className="workspace-grid">
-        <section className="surface atlas-panel">
-          <div className="panel-header">
-            <div>
-              <p className="eyebrow">Market Atlas</p>
-              <h2>Competitive landscape</h2>
+        <div className="workspace-grid observatory-grid">
+          <section className="atlas-panel observatory-atlas">
+            <div className="panel-header atlas-header">
+              <div>
+                <p className="eyebrow">Explorable space</p>
+                <h2>The atlas is staged as floating territory, not a static diagram.</h2>
+              </div>
+              <p className="muted">Pan, zoom, and select islands to pull their field notes into the codex without losing the wider market shape.</p>
             </div>
-            <p className="muted">Click a node to inspect its detail panel.</p>
-          </div>
-          <AtlasCanvas atlas={result?.atlas ?? null} selectedNodeId={selectedNodeId} onSelectNode={setSelectedNodeId} />
-        </section>
+            <AtlasCanvas atlas={view.atlas} selectedNodeId={selectedNodeId} onSelectNode={setSelectedNodeId} />
+          </section>
 
-        <DetailPanel node={selectedNode} detail={selectedDetail} />
-      </div>
+          <DetailPanel node={selectedNode} detail={selectedDetail} />
+        </div>
 
-      <div className="card-grid">
-        <section className="surface summary-card pulse-card">
-          <p className="eyebrow">Market Pulse</p>
-          {result ? (
-            <>
-              <h3>{result.pulse.summary}</h3>
-              <div className="pulse-grid">
-                <div>
-                  <span className="detail-label">Temperature</span>
-                  <p>{result.pulse.market_temperature}</p>
-                </div>
-                <div>
-                  <span className="detail-label">Competition</span>
-                  <p>{result.pulse.competition_level}</p>
-                </div>
-              </div>
-              <div className="detail-section">
-                <span className="detail-label">Whitespace</span>
-                <p>{result.pulse.whitespace}</p>
-              </div>
-              <div className="detail-section">
-                <span className="detail-label">Top signals</span>
-                <ul className="detail-list">
-                  {result.pulse.top_signals.map((signal) => (
-                    <li key={signal}>{signal}</li>
-                  ))}
-                </ul>
-              </div>
-            </>
-          ) : (
-            <p className="muted">Waiting for the first pulse snapshot from the API.</p>
-          )}
-        </section>
-
-        <SummaryCard
-          title="Brutal Truth"
-          card={result?.brutal_truth ?? null}
-          fallback="Final synthesis appears when the run reaches complete."
-        />
-        <SummaryCard
-          title="Opportunity"
-          card={result?.opportunity ?? null}
-          fallback="Opportunity framing appears when the run reaches complete."
-        />
-      </div>
-
-      {result?.sources?.length ? (
-        <section className="surface summary-card">
-          <p className="eyebrow">Sources</p>
-          <ul className="detail-list">
-            {result.sources.map((source) => (
-              <li key={source}>
-                <a href={source} rel="noreferrer" target="_blank">
-                  {source}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+        <ExperimentalPrefabShell section="summary" view={view} fallback={<RunSummaryShell view={view} />} />
+      </section>
     </div>
   );
 }

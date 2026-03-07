@@ -1,4 +1,4 @@
-export type RunStatus = "queued" | "running" | "pulse_ready" | "complete" | "failed";
+﻿export type RunStatus = "queued" | "running" | "pulse_ready" | "complete" | "failed";
 export type NodeType = "idea" | "competitor" | "segment" | "adjacent_category" | "opportunity";
 export type EdgeType = "competes_with" | "belongs_to_segment" | "adjacent_to" | "opportunity_in";
 
@@ -59,12 +59,12 @@ export interface PulseSummary {
 
 export interface RunResult {
   idea: string;
-  pulse: PulseSummary;
-  atlas: MarketAtlas;
-  competitor_details: Record<string, CompetitorDetail>;
-  brutal_truth: SummaryCardData | null;
-  opportunity: SummaryCardData | null;
-  sources: string[];
+  pulse?: PulseSummary | null;
+  atlas?: MarketAtlas | null;
+  competitor_details?: Record<string, CompetitorDetail> | null;
+  brutal_truth?: SummaryCardData | null;
+  opportunity?: SummaryCardData | null;
+  sources?: string[] | null;
 }
 
 export interface RunRecord {
@@ -90,4 +90,57 @@ export interface RunStatusResponse {
   updated_at: string;
   progress_message: string | null;
   error_message: string | null;
+}
+
+export interface StatusStepViewModel {
+  id: RunStatus;
+  label: string;
+  state: "done" | "active" | "upcoming" | "failed";
+}
+
+export interface StatusShellViewModel {
+  status: RunStatus;
+  label: string;
+  headline: string;
+  description: string;
+  progressMessage: string | null;
+  steps: StatusStepViewModel[];
+  isTerminal: boolean;
+}
+
+export interface PulseCardViewModel {
+  state: "waiting" | "ready";
+  headline: string;
+  note: string;
+  marketTemperature: string;
+  competitionLevel: string;
+  whitespace: string;
+  topSignals: string[];
+}
+
+export interface SummaryCardViewModel {
+  title: string;
+  eyebrow: string;
+  state: "waiting" | "ready";
+  headline: string;
+  body: string;
+  bullets: string[];
+  fallback: string;
+}
+
+export interface RunViewModel {
+  runId: string;
+  idea: string;
+  status: RunStatus;
+  createdAt: string | null;
+  updatedAt: string | null;
+  progressMessage: string | null;
+  errorMessage: string | null;
+  statusShell: StatusShellViewModel;
+  pulseCard: PulseCardViewModel;
+  brutalTruthCard: SummaryCardViewModel;
+  opportunityCard: SummaryCardViewModel;
+  atlas: MarketAtlas | null;
+  competitorDetails: Record<string, CompetitorDetail>;
+  sources: string[];
 }

@@ -1,4 +1,4 @@
-# RealityCheck AI Project Context
+﻿# RealityCheck AI Project Context
 
 ## One-line summary
 
@@ -29,6 +29,8 @@ Core questions:
 - Next.js App Router with TypeScript
 - client-side polling on `/runs/[id]`
 - React Flow for the atlas canvas
+- a frontend view-model layer that normalizes partial or missing run payloads before components render
+- an experimental client-only Prefab shell boundary for non-atlas UI, kept behind a fallback-first toggle
 - deterministic typed props for atlas rendering
 
 ### Backend

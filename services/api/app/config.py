@@ -1,7 +1,10 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 from pathlib import Path
+
+
+DEFAULT_LOCAL_CORS_REGEX = r"^https?://(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$"
 
 
 class Settings:
@@ -16,8 +19,9 @@ class Settings:
             os.getenv("FIXTURES_DIR"),
             self.repo_root / "data" / "fixtures",
         )
-        origins = os.getenv("CORS_ORIGINS", "http://localhost:3000")
+        origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
         self.cors_origins = [origin.strip() for origin in origins.split(",") if origin.strip()]
+        self.cors_origin_regex = os.getenv("CORS_ORIGIN_REGEX", DEFAULT_LOCAL_CORS_REGEX)
 
     def _resolve_path(self, raw: str | None, fallback: Path) -> Path:
         if not raw:
