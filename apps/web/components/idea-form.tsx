@@ -23,7 +23,7 @@ export function IdeaForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await createRun(idea, true);
+      const response = await createRun(idea, process.env.NEXT_PUBLIC_DEMO_MODE === "true");
       router.push(`/runs/${response.run_id}`);
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Could not create the run.");
