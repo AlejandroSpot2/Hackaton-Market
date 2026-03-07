@@ -5,24 +5,49 @@ export default function HomePage() {
     <main className="page-shell">
       <section className="landing-grid">
         <div className="hero-card surface">
-          <p className="eyebrow">RealityCheck AI</p>
+          <p className="eyebrow">RealityCheck AI — Hackathon MVP</p>
           <h1>Turn a startup idea into a navigable market atlas.</h1>
           <p className="hero-copy">
-            This MVP is atlas-first. Submit a SaaS or AI software idea, watch the run move through real
-            progressive states, and inspect the evolving competitive map before the final synthesis lands.
+            Submit any SaaS or AI software idea. Watch live agentic web research, LLM synthesis,
+            and a market map build in real time — with interactive visualizations, competitor analysis,
+            and a brutal VC truth.
           </p>
           <div className="hero-notes">
-            <div>
-              <span className="detail-label">Fast pulse</span>
-              <p>Queued, running, and pulse-ready are all visible in the UI.</p>
+            <div className="hero-note">
+              <span className="hero-note-icon">🔍</span>
+              <div>
+                <span className="detail-label">Live web research</span>
+                <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.82rem", marginTop: 3 }}>
+                  Exa scans the internet for real competitors and pricing signals.
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="detail-label">Atlas first</span>
-              <p>React Flow renders the market map as soon as partial data exists.</p>
+            <div className="hero-note">
+              <span className="hero-note-icon">🧠</span>
+              <div>
+                <span className="detail-label">Gemini synthesis</span>
+                <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.82rem", marginTop: 3 }}>
+                  Gemini 2.5 Pro builds a structured market atlas with brutal VC insights.
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="detail-label">Demo-safe</span>
-              <p>Mock fixtures drive the happy path without live provider dependencies.</p>
+            <div className="hero-note">
+              <span className="hero-note-icon">🗺️</span>
+              <div>
+                <span className="detail-label">Interactive atlas</span>
+                <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.82rem", marginTop: 3 }}>
+                  React Flow canvas with draggable nodes, radar charts, and competitor breakdowns.
+                </p>
+              </div>
+            </div>
+            <div className="hero-note">
+              <span className="hero-note-icon">📦</span>
+              <div>
+                <span className="detail-label">Demo-safe</span>
+                <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.82rem", marginTop: 3 }}>
+                  Demo mode uses rich fixtures and walks the full lifecycle instantly.
+                </p>
+              </div>
             </div>
           </div>
         </div>
