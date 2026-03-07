@@ -48,6 +48,15 @@ Core questions:
 5. The worker writes a final `complete` result.
 6. The run page polls the API and progressively updates the UI.
 
+## Progressive result invariant
+
+The run lifecycle produces two result stages with different completeness:
+
+- **At `pulse_ready` status**: `brutal_truth` and `opportunity` are `null`. The atlas contains the idea node, 3 competitors, and 1 segment node (~5 nodes). `competitor_details` has entries for the pulse competitors only.
+- **At `complete` status**: `brutal_truth` and `opportunity` are populated `SummaryCard` objects. The atlas is expanded with `adjacent_category` and `opportunity` nodes (~9 nodes). `competitor_details` has entries for all competitors.
+
+This invariant is enforced by fixture structure and expected from live providers.
+
 ## Integration boundary for real providers
 
 When real providers are added:

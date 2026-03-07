@@ -22,6 +22,7 @@ interface AtlasCanvasProps {
   atlas: MarketAtlas | null;
   selectedNodeId: string | null;
   onSelectNode: (nodeId: string) => void;
+  isLoading?: boolean;
 }
 
 interface AtlasSceneNodeData {

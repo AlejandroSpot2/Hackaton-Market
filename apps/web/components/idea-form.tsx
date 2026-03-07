@@ -10,11 +10,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { DEMO_IDEAS } from "@/lib/constants";
 import { createRun } from "@/lib/api";
 
+const SPONSORS = [
+  { name: "Google Gemini", dot: "#7c4dff" },
+  { name: "Exa", dot: "#7c3aed" },
+  { name: "Prefect", dot: "#22c55e" },
+  { name: "Next.js", dot: "#630330" },
+  { name: "React Flow", dot: "#cc8e73" },
+];
+
 export function IdeaForm() {
   const router = useRouter();
   const [idea, setIdea] = useState(DEMO_IDEAS[0]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [liveMode, setLiveMode] = useState(false);
 
   const trimmedIdea = idea.trim();
   const isIdeaValid = trimmedIdea.length >= 12;
@@ -29,9 +38,8 @@ export function IdeaForm() {
 
     setError(null);
     setIsSubmitting(true);
-
     try {
-      const response = await createRun(trimmedIdea, true);
+      const response = await createRun(trimmedIdea, !liveMode);
       router.push(`/runs/${response.run_id}`);
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Could not start the analysis run.");
@@ -94,8 +102,22 @@ export function IdeaForm() {
           {isSubmitting ? "Starting analysis..." : "Analyze idea"}
           <ArrowRight className="h-4 w-4" />
         </Button>
-        <p className="max-w-xs text-sm leading-6 text-muted-foreground">Demo mode still uses persisted fixture-backed runs so the happy path stays stable.</p>
+        <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={liveMode}
+            onChange={(e) => setLiveMode(e.target.checked)}
+            className="h-3.5 w-3.5 accent-primary"
+          />
+          Live AI mode (Gemini + Exa)
+        </label>
       </div>
+
+      {!liveMode && (
+        <p className="text-sm text-muted-foreground">
+          Demo mode uses rich fixture data and walks the full run lifecycle instantly. Enable Live AI mode to use real Gemini + Exa.
+        </p>
+      )}
 
       <div className="space-y-3">
         <p className="section-kicker">Try a demo prompt</p>
@@ -115,6 +137,16 @@ export function IdeaForm() {
 
       {!isIdeaValid ? <p className="text-sm text-muted-foreground">Use at least 12 characters so the run has enough context to produce a usable atlas.</p> : null}
       {error ? <p className="rounded-[1.25rem] border border-rose-200/90 bg-rose-50/80 px-4 py-3 text-sm text-rose-700 backdrop-blur-xl">{error}</p> : null}
+
+      <div className="flex flex-wrap items-center gap-2.5 border-t border-white/60 pt-5">
+        <span className="section-kicker mr-1">Powered by</span>
+        {SPONSORS.map((s) => (
+          <span key={s.name} className="glass-chip !text-[0.7rem]">
+            <span className="h-2 w-2 rounded-full" style={{ background: s.dot }} />
+            {s.name}
+          </span>
+        ))}
+      </div>
     </motion.form>
   );
 }

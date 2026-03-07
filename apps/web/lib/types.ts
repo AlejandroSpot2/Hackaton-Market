@@ -1,4 +1,4 @@
-﻿export type RunStatus = "queued" | "running" | "pulse_ready" | "complete" | "failed";
+export type RunStatus = "queued" | "running" | "pulse_ready" | "complete" | "failed";
 export type NodeType = "idea" | "competitor" | "segment" | "adjacent_category" | "opportunity";
 export type EdgeType = "competes_with" | "belongs_to_segment" | "adjacent_to" | "opportunity_in";
 
@@ -76,11 +76,17 @@ export interface RunRecord {
   progress_message: string | null;
   error_message: string | null;
   result: RunResult | null;
+  data_source: "demo" | "live" | "fallback" | null;
 }
 
 export interface AnalyzeResponse {
   run_id: string;
   status: RunStatus;
+}
+
+export interface AnalyzeRequest {
+  idea: string;
+  demo_mode: boolean;
 }
 
 export interface RunStatusResponse {
@@ -90,6 +96,7 @@ export interface RunStatusResponse {
   updated_at: string;
   progress_message: string | null;
   error_message: string | null;
+  data_source: "demo" | "live" | "fallback" | null;
 }
 
 export interface StatusStepViewModel {

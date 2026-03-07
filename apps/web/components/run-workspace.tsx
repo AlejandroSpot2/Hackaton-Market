@@ -16,9 +16,7 @@ import { fetchRunSnapshot, RunSnapshot } from "@/lib/api";
 import { buildRunViewModel } from "@/lib/run-view-model";
 import { cn } from "@/lib/utils";
 
-interface RunWorkspaceProps {
-  runId: string;
-}
+interface RunWorkspaceProps { runId: string; }
 
 const HERO_SIGILS = ["Atlas-first workspace", "Pulse before synthesis", "Persisted run state"];
 
@@ -82,16 +80,8 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
     }
 
     void pollRun();
-    intervalId = window.setInterval(() => {
-      void pollRun();
-    }, 2500);
-
-    return () => {
-      mounted = false;
-      if (intervalId) {
-        window.clearInterval(intervalId);
-      }
-    };
+    intervalId = window.setInterval(pollRun, 2500);
+    return () => { mounted = false; if (intervalId) window.clearInterval(intervalId); };
   }, [runId]);
 
   const view = snapshot?.view ?? buildRunViewModel({ runId, statusData: null, record: null });
