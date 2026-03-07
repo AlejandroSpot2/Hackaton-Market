@@ -1,0 +1,204 @@
+{
+  "slug": "job-application-agent",
+  "keywords": ["job", "jobs", "resume", "career", "application", "recruiter", "hiring"],
+  "pulse_result": {
+    "idea": "AI job application agent",
+    "pulse": {
+      "idea": "AI job application agent",
+      "summary": "Strong consumer demand, but the market is already crowded with automation-first products and trust issues.",
+      "market_temperature": "heated",
+      "competition_level": "high",
+      "whitespace": "Shift from blind application volume into interview readiness and high-fit targeting.",
+      "top_signals": [
+        "Users want time savings immediately.",
+        "Resume and application autofill is already commoditizing.",
+        "Trust, spam, and recruiter backlash are meaningful friction points."
+      ]
+    },
+    "atlas": {
+      "nodes": [
+        {"id": "idea", "type": "idea", "label": "AI job application agent", "summary": "An assistant that finds roles and submits applications automatically.", "market_signal": "Automation-led consumer wedge", "position": {"x": 0, "y": 0}},
+        {"id": "lazyapply", "type": "competitor", "label": "LazyApply", "summary": "Volume-based auto apply workflow for job seekers.", "market_signal": "Fast top-of-funnel automation", "position": {"x": -260, "y": -130}},
+        {"id": "simplify", "type": "competitor", "label": "Simplify", "summary": "Application autofill and role tracking for candidates.", "market_signal": "Strong convenience layer", "position": {"x": 260, "y": -130}},
+        {"id": "teal", "type": "competitor", "label": "Teal", "summary": "Career management with resume and job tracking workflows.", "market_signal": "Broader career operating system", "position": {"x": -210, "y": 130}},
+        {"id": "segment", "type": "segment", "label": "Candidate workflow tools", "summary": "Products focused on consumer-side job search execution.", "market_signal": "High saturation", "position": {"x": 110, "y": 210}}
+      ],
+      "edges": [
+        {"id": "e1", "source": "idea", "target": "lazyapply", "type": "competes_with", "label": "auto-apply"},
+        {"id": "e2", "source": "idea", "target": "simplify", "type": "competes_with", "label": "application assist"},
+        {"id": "e3", "source": "idea", "target": "teal", "type": "competes_with", "label": "job search workflow"},
+        {"id": "e4", "source": "lazyapply", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e5", "source": "simplify", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e6", "source": "teal", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"}
+      ]
+    },
+    "competitor_details": {
+      "lazyapply": {
+        "node_id": "lazyapply",
+        "name": "LazyApply",
+        "website": "https://lazyapply.com",
+        "tagline": "Auto-apply to jobs at scale.",
+        "why_it_wins": "Clear, immediate value for candidates who want volume with minimal effort.",
+        "risks": ["Low trust with recruiters.", "Hard to differentiate long term."],
+        "pricing_hint": "Low monthly subscription",
+        "signals": ["Consumer-friendly onboarding", "Direct ROI story in minutes saved"],
+        "sources": ["https://lazyapply.com"]
+      },
+      "simplify": {
+        "node_id": "simplify",
+        "name": "Simplify",
+        "website": "https://simplify.jobs",
+        "tagline": "Autofill applications and organize the search.",
+        "why_it_wins": "Convenience, clean UX, and role tracking make it sticky.",
+        "risks": ["Convenience features are easy to copy."],
+        "pricing_hint": "Freemium plus premium tools",
+        "signals": ["Strong workflow coverage", "Appeals to students and early-career users"],
+        "sources": ["https://simplify.jobs"]
+      },
+      "teal": {
+        "node_id": "teal",
+        "name": "Teal",
+        "website": "https://www.tealhq.com",
+        "tagline": "Career growth tooling beyond applications.",
+        "why_it_wins": "Wider surface area than pure auto-apply tools.",
+        "risks": ["Broader platform can feel less focused."],
+        "pricing_hint": "Freemium career toolkit",
+        "signals": ["Resume optimization", "Tracking plus planning"],
+        "sources": ["https://www.tealhq.com"]
+      }
+    },
+    "brutal_truth": null,
+    "opportunity": null,
+    "sources": [
+      "https://lazyapply.com",
+      "https://simplify.jobs",
+      "https://www.tealhq.com"
+    ]
+  },
+  "final_result": {
+    "idea": "AI job application agent",
+    "pulse": {
+      "idea": "AI job application agent",
+      "summary": "The space is heated and easy to copy. Winners either own a niche candidate workflow or move closer to outcomes recruiters value.",
+      "market_temperature": "heated",
+      "competition_level": "high",
+      "whitespace": "Own interview execution or niche role matching instead of generic spray-and-pray automation.",
+      "top_signals": [
+        "Recruiters increasingly filter out low-quality volume applications.",
+        "Generic autofill features are becoming table stakes.",
+        "High-intent niches can justify workflow depth and higher pricing."
+      ]
+    },
+    "atlas": {
+      "nodes": [
+        {"id": "idea", "type": "idea", "label": "AI job application agent", "summary": "An assistant that finds roles and submits applications automatically.", "market_signal": "Automation-led consumer wedge", "position": {"x": 0, "y": 0}},
+        {"id": "lazyapply", "type": "competitor", "label": "LazyApply", "summary": "Volume-based auto apply workflow for job seekers.", "market_signal": "Top-of-funnel scale", "position": {"x": -300, "y": -160}},
+        {"id": "simplify", "type": "competitor", "label": "Simplify", "summary": "Application autofill and job tracking for candidates.", "market_signal": "Convenience moat", "position": {"x": 290, "y": -150}},
+        {"id": "teal", "type": "competitor", "label": "Teal", "summary": "Career management with planning, resume, and search tools.", "market_signal": "Wider workflow ownership", "position": {"x": -240, "y": 130}},
+        {"id": "loopcv", "type": "competitor", "label": "LoopCV", "summary": "Automates job search loops and outreach actions.", "market_signal": "Automation depth", "position": {"x": 280, "y": 90}},
+        {"id": "huntr", "type": "competitor", "label": "Huntr", "summary": "Search organization and application tracking.", "market_signal": "Search operating layer", "position": {"x": -360, "y": 40}},
+        {"id": "segment", "type": "segment", "label": "Candidate workflow tools", "summary": "Products focused on candidate-side execution and organization.", "market_signal": "Crowded segment", "position": {"x": 20, "y": 240}},
+        {"id": "adjacent", "type": "adjacent_category", "label": "Recruiting ops tooling", "summary": "Employer-side tooling where value is tied to outcome quality and compliance.", "market_signal": "Different buyer, better ROI proof", "position": {"x": 390, "y": 220}},
+        {"id": "opportunity", "type": "opportunity", "label": "Interview execution wedge", "summary": "Target interview scheduling, prep loops, and employer-specific packaging.", "market_signal": "More defensible niche path", "position": {"x": 10, "y": -260}}
+      ],
+      "edges": [
+        {"id": "e1", "source": "idea", "target": "lazyapply", "type": "competes_with", "label": "competes"},
+        {"id": "e2", "source": "idea", "target": "simplify", "type": "competes_with", "label": "competes"},
+        {"id": "e3", "source": "idea", "target": "teal", "type": "competes_with", "label": "competes"},
+        {"id": "e4", "source": "idea", "target": "loopcv", "type": "competes_with", "label": "competes"},
+        {"id": "e5", "source": "idea", "target": "huntr", "type": "competes_with", "label": "competes"},
+        {"id": "e6", "source": "lazyapply", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e7", "source": "simplify", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e8", "source": "teal", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e9", "source": "loopcv", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e10", "source": "huntr", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e11", "source": "segment", "target": "adjacent", "type": "adjacent_to", "label": "adjacent buyer shift"},
+        {"id": "e12", "source": "opportunity", "target": "segment", "type": "opportunity_in", "label": "wedge into"}
+      ]
+    },
+    "competitor_details": {
+      "lazyapply": {
+        "node_id": "lazyapply",
+        "name": "LazyApply",
+        "website": "https://lazyapply.com",
+        "tagline": "Auto-apply to jobs at scale.",
+        "why_it_wins": "Immediate, obvious value for time-starved candidates chasing application volume.",
+        "risks": ["Low trust with recruiters.", "Weak long-term differentiation.", "Policy and spam pressure."],
+        "pricing_hint": "Low monthly subscription",
+        "signals": ["High perceived speed", "Simple promise", "Consumer acquisition friendly"],
+        "sources": ["https://lazyapply.com"]
+      },
+      "simplify": {
+        "node_id": "simplify",
+        "name": "Simplify",
+        "website": "https://simplify.jobs",
+        "tagline": "Autofill applications and organize the search.",
+        "why_it_wins": "Convenience and organization reduce job search friction without feeling as spammy.",
+        "risks": ["Feature overlap is easy for competitors to match.", "Consumer retention can be short-lived."],
+        "pricing_hint": "Freemium plus premium tools",
+        "signals": ["Strong UX", "Wide role coverage", "Search tracking"],
+        "sources": ["https://simplify.jobs"]
+      },
+      "teal": {
+        "node_id": "teal",
+        "name": "Teal",
+        "website": "https://www.tealhq.com",
+        "tagline": "Career growth tooling beyond applications.",
+        "why_it_wins": "Owns a larger share of the career workflow than point automation apps.",
+        "risks": ["Broader scope can dilute positioning.", "Longer path to proving ROI."],
+        "pricing_hint": "Freemium career toolkit",
+        "signals": ["Resume support", "Search organization", "Career planning"],
+        "sources": ["https://www.tealhq.com"]
+      },
+      "loopcv": {
+        "node_id": "loopcv",
+        "name": "LoopCV",
+        "website": "https://www.loopcv.pro",
+        "tagline": "Automate repetitive job search actions.",
+        "why_it_wins": "Automation depth appeals to candidates who want maximum leverage.",
+        "risks": ["May look interchangeable with generic auto-apply tools.", "Trust concerns remain."],
+        "pricing_hint": "Subscription",
+        "signals": ["Workflow automation", "Strong ROI framing"],
+        "sources": ["https://www.loopcv.pro"]
+      },
+      "huntr": {
+        "node_id": "huntr",
+        "name": "Huntr",
+        "website": "https://huntr.co",
+        "tagline": "Track jobs, contacts, and search progress.",
+        "why_it_wins": "Acts as the system of record for the search rather than a one-shot automation tool.",
+        "risks": ["Tracking alone can feel passive.", "Harder to create wow moments."],
+        "pricing_hint": "Freemium",
+        "signals": ["Sticky workflow", "Useful for serious job seekers"],
+        "sources": ["https://huntr.co"]
+      }
+    },
+    "brutal_truth": {
+      "title": "Brutal Truth",
+      "headline": "Generic auto-apply products get commoditized quickly.",
+      "body": "If the product promise is just more applications with fewer clicks, the market will compare on speed, price, and superficial convenience. That is a weak place to build a durable moat.",
+      "bullets": [
+        "Recruiters increasingly punish low-quality volume.",
+        "Application autofill is easy to clone.",
+        "Retention is hard when a job search ends."
+      ]
+    },
+    "opportunity": {
+      "title": "Opportunity",
+      "headline": "Own the interview execution loop for a high-value niche.",
+      "body": "A more defensible wedge is to help candidates move from shortlist to offer in a narrow segment where context matters. That creates room for better outcomes, higher pricing, and differentiated data.",
+      "bullets": [
+        "Target one role family first.",
+        "Bundle prep, scheduling, and employer-specific narratives.",
+        "Measure quality outcomes instead of apply volume."
+      ]
+    },
+    "sources": [
+      "https://lazyapply.com",
+      "https://simplify.jobs",
+      "https://www.tealhq.com",
+      "https://www.loopcv.pro",
+      "https://huntr.co"
+    ]
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "slug": "mobile-coding-copilot",
+  "keywords": ["mobile", "coding", "copilot", "app builder", "developer", "code", "react native", "flutter"],
+  "pulse_result": {
+    "idea": "AI mobile coding copilot",
+    "pulse": {
+      "idea": "AI mobile coding copilot",
+      "summary": "Developer copilots are hot, but the mobile-specific angle is less saturated than the general coding market.",
+      "market_temperature": "heated",
+      "competition_level": "medium",
+      "whitespace": "Focus on mobile release workflows, debugging on-device issues, and app store readiness.",
+      "top_signals": [
+        "General code generation is crowded.",
+        "Mobile teams still wrestle with platform-specific friction.",
+        "Shipping workflows can be more defensible than raw code completion."
+      ]
+    },
+    "atlas": {
+      "nodes": [
+        {"id": "idea", "type": "idea", "label": "AI mobile coding copilot", "summary": "An assistant for building and shipping mobile apps faster.", "market_signal": "Developer productivity wedge", "position": {"x": 0, "y": 0}},
+        {"id": "copilot", "type": "competitor", "label": "GitHub Copilot", "summary": "General coding copilot with broad IDE coverage.", "market_signal": "Mass distribution", "position": {"x": -260, "y": -120}},
+        {"id": "cursor", "type": "competitor", "label": "Cursor", "summary": "AI-first coding editor for software teams.", "market_signal": "Workflow depth", "position": {"x": 250, "y": -140}},
+        {"id": "replit", "type": "competitor", "label": "Replit", "summary": "Agent-assisted coding with deployment workflows.", "market_signal": "Integrated build loop", "position": {"x": -180, "y": 140}},
+        {"id": "segment", "type": "segment", "label": "Developer copilots", "summary": "General-purpose AI tooling for developers.", "market_signal": "Fast-moving baseline", "position": {"x": 130, "y": 220}}
+      ],
+      "edges": [
+        {"id": "e1", "source": "idea", "target": "copilot", "type": "competes_with", "label": "coding assist"},
+        {"id": "e2", "source": "idea", "target": "cursor", "type": "competes_with", "label": "IDE workflow"},
+        {"id": "e3", "source": "idea", "target": "replit", "type": "competes_with", "label": "agent build loop"},
+        {"id": "e4", "source": "copilot", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e5", "source": "cursor", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e6", "source": "replit", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"}
+      ]
+    },
+    "competitor_details": {
+      "copilot": {
+        "node_id": "copilot",
+        "name": "GitHub Copilot",
+        "website": "https://github.com/features/copilot",
+        "tagline": "General-purpose AI coding assistant.",
+        "why_it_wins": "Distribution and familiarity make it the baseline for many engineering teams.",
+        "risks": ["Not tailored to mobile release pain.", "Baseline expectations keep rising."],
+        "pricing_hint": "Per-seat subscription",
+        "signals": ["IDE ubiquity", "Enterprise reach"],
+        "sources": ["https://github.com/features/copilot"]
+      },
+      "cursor": {
+        "node_id": "cursor",
+        "name": "Cursor",
+        "website": "https://www.cursor.com",
+        "tagline": "AI-first code editor.",
+        "why_it_wins": "Strong workflow integration for teams that want the editor itself to be AI-native.",
+        "risks": ["Still broad rather than mobile-specific."],
+        "pricing_hint": "Subscription",
+        "signals": ["Power-user adoption", "Deep editing loop"],
+        "sources": ["https://www.cursor.com"]
+      },
+      "replit": {
+        "node_id": "replit",
+        "name": "Replit",
+        "website": "https://replit.com",
+        "tagline": "Browser-based coding with AI agents.",
+        "why_it_wins": "Combines coding, execution, and sharing in one environment.",
+        "risks": ["Mobile-native teams may still prefer their own toolchains."],
+        "pricing_hint": "Tiered plans",
+        "signals": ["Integrated environment", "Fast prototyping"],
+        "sources": ["https://replit.com"]
+      }
+    },
+    "brutal_truth": null,
+    "opportunity": null,
+    "sources": [
+      "https://github.com/features/copilot",
+      "https://www.cursor.com",
+      "https://replit.com"
+    ]
+  },
+  "final_result": {
+    "idea": "AI mobile coding copilot",
+    "pulse": {
+      "idea": "AI mobile coding copilot",
+      "summary": "The general coding copilot market is brutally competitive, but mobile teams still have distinct release, debugging, and compliance pain that broad products only partially address.",
+      "market_temperature": "heated",
+      "competition_level": "medium",
+      "whitespace": "Specialize on the last mile of mobile shipping: builds, testing, crashes, store metadata, and release confidence.",
+      "top_signals": [
+        "Coding assistance is baseline now.",
+        "Mobile platform quirks still slow teams down.",
+        "Teams pay for anything that reduces release risk."
+      ]
+    },
+    "atlas": {
+      "nodes": [
+        {"id": "idea", "type": "idea", "label": "AI mobile coding copilot", "summary": "An assistant for building and shipping mobile apps faster.", "market_signal": "Developer productivity wedge", "position": {"x": 0, "y": 0}},
+        {"id": "copilot", "type": "competitor", "label": "GitHub Copilot", "summary": "General coding copilot with broad IDE coverage.", "market_signal": "Baseline expectation", "position": {"x": -330, "y": -150}},
+        {"id": "cursor", "type": "competitor", "label": "Cursor", "summary": "AI-first coding editor with deep workflow integration.", "market_signal": "Power-user editor moat", "position": {"x": 310, "y": -160}},
+        {"id": "replit", "type": "competitor", "label": "Replit", "summary": "Agent-driven coding with execution and sharing.", "market_signal": "Integrated build loop", "position": {"x": -220, "y": 130}},
+        {"id": "codeium", "type": "competitor", "label": "Codeium", "summary": "Autocomplete and AI coding support across editors.", "market_signal": "Alternative baseline", "position": {"x": 250, "y": 80}},
+        {"id": "bolt", "type": "competitor", "label": "Bolt.new", "summary": "Prompt-to-app experience for fast product prototyping.", "market_signal": "Rapid prototyping", "position": {"x": -390, "y": 30}},
+        {"id": "segment", "type": "segment", "label": "Developer copilots", "summary": "General AI tooling for code writing and editing.", "market_signal": "Extremely active market", "position": {"x": 20, "y": 250}},
+        {"id": "adjacent", "type": "adjacent_category", "label": "Mobile release ops", "summary": "Build pipelines, testing, crash triage, and store submission workflows.", "market_signal": "Closer to pain and budget", "position": {"x": 380, "y": 220}},
+        {"id": "opportunity", "type": "opportunity", "label": "Release confidence copilot", "summary": "An assistant tuned for test failures, app store requirements, and mobile regressions.", "market_signal": "Better buyer pain fit", "position": {"x": -10, "y": -270}}
+      ],
+      "edges": [
+        {"id": "e1", "source": "idea", "target": "copilot", "type": "competes_with", "label": "competes"},
+        {"id": "e2", "source": "idea", "target": "cursor", "type": "competes_with", "label": "competes"},
+        {"id": "e3", "source": "idea", "target": "replit", "type": "competes_with", "label": "competes"},
+        {"id": "e4", "source": "idea", "target": "codeium", "type": "competes_with", "label": "competes"},
+        {"id": "e5", "source": "idea", "target": "bolt", "type": "competes_with", "label": "competes"},
+        {"id": "e6", "source": "copilot", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e7", "source": "cursor", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e8", "source": "replit", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e9", "source": "codeium", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e10", "source": "bolt", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e11", "source": "segment", "target": "adjacent", "type": "adjacent_to", "label": "budget shift"},
+        {"id": "e12", "source": "opportunity", "target": "adjacent", "type": "opportunity_in", "label": "fit here"}
+      ]
+    },
+    "competitor_details": {
+      "copilot": {
+        "node_id": "copilot",
+        "name": "GitHub Copilot",
+        "website": "https://github.com/features/copilot",
+        "tagline": "General-purpose AI coding assistant.",
+        "why_it_wins": "It sets the default expectation for AI assistance inside familiar developer workflows.",
+        "risks": ["Broad positioning makes mobile-specific depth harder.", "Competes on platform reach rather than niche focus."],
+        "pricing_hint": "Per-seat subscription",
+        "signals": ["Distribution", "Enterprise trust", "Editor reach"],
+        "sources": ["https://github.com/features/copilot"]
+      },
+      "cursor": {
+        "node_id": "cursor",
+        "name": "Cursor",
+        "website": "https://www.cursor.com",
+        "tagline": "AI-first code editor.",
+        "why_it_wins": "Strong editing loop and agent-like workflow make it a serious option for high-intensity engineers.",
+        "risks": ["Still broad across domains.", "Mobile-specific ops remain outside the editor."],
+        "pricing_hint": "Subscription",
+        "signals": ["Workflow depth", "Power-user pull"],
+        "sources": ["https://www.cursor.com"]
+      },
+      "replit": {
+        "node_id": "replit",
+        "name": "Replit",
+        "website": "https://replit.com",
+        "tagline": "Browser-based coding with AI agents.",
+        "why_it_wins": "Combines generation, execution, and collaboration in one loop.",
+        "risks": ["Serious mobile teams still rely on native tooling.", "Generic rather than mobile-ops specific."],
+        "pricing_hint": "Tiered plans",
+        "signals": ["Integrated environment", "Prototype speed"],
+        "sources": ["https://replit.com"]
+      },
+      "codeium": {
+        "node_id": "codeium",
+        "name": "Codeium",
+        "website": "https://codeium.com",
+        "tagline": "Autocomplete and AI coding assistance.",
+        "why_it_wins": "Provides a credible lower-friction alternative in the baseline copilot category.",
+        "risks": ["Hard to stand out if the product stays generic."],
+        "pricing_hint": "Freemium and team plans",
+        "signals": ["Broad editor coverage", "Price pressure"],
+        "sources": ["https://codeium.com"]
+      },
+      "bolt": {
+        "node_id": "bolt",
+        "name": "Bolt.new",
+        "website": "https://bolt.new",
+        "tagline": "Prompt to app prototype.",
+        "why_it_wins": "Delivers very fast visible progress, which is compelling for MVP builders.",
+        "risks": ["Prototype focus is not the same as production mobile shipping.", "Can create unrealistic expectations."],
+        "pricing_hint": "Usage-based or subscription",
+        "signals": ["Fast output", "Strong demo appeal"],
+        "sources": ["https://bolt.new"]
+      }
+    },
+    "brutal_truth": {
+      "title": "Brutal Truth",
+      "headline": "You cannot win by being another general coding copilot.",
+      "body": "The broad market already belongs to products with enormous distribution, editor lock-in, or platform depth. A mobile-focused product needs to attach itself to pain they do not fully solve.",
+      "bullets": [
+        "Code completion alone is not enough.",
+        "Developer trust comes from reducing release risk, not flashy demos.",
+        "Platform-specific pain is where the wedge lives."
+      ]
+    },
+    "opportunity": {
+      "title": "Opportunity",
+      "headline": "Become the release confidence layer for mobile teams.",
+      "body": "Mobile engineers still lose time to flaky builds, crash triage, store metadata, screenshots, and platform review friction. A copilot that owns this last-mile workflow can be more specific, more valuable, and more defensible.",
+      "bullets": [
+        "Start with React Native or Flutter teams.",
+        "Own test failure diagnosis and app store readiness.",
+        "Tie pricing to release throughput or regression reduction."
+      ]
+    },
+    "sources": [
+      "https://github.com/features/copilot",
+      "https://www.cursor.com",
+      "https://replit.com",
+      "https://codeium.com",
+      "https://bolt.new"
+    ]
+  }
+}

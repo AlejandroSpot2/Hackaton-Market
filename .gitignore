@@ -1,0 +1,28 @@
+# Node / Next
+**/node_modules/
+**/.next/
+**/dist/
+
+# Python
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+*.pyc
+
+# Local env
+.env
+.env.local
+apps/web/.env.local
+services/api/.env
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Runtime data
+data/runs/*.json
+!data/runs/.gitkeep
+# Prefect
+.prefect/

@@ -1,0 +1,204 @@
+{
+  "slug": "travel-planner",
+  "keywords": ["travel", "trip", "planner", "vacation", "booking", "itinerary", "hotel", "flight"],
+  "pulse_result": {
+    "idea": "AI travel planner",
+    "pulse": {
+      "idea": "AI travel planner",
+      "summary": "Consumer trip planning has visible demand and strong demo appeal, but it sits inside an already noisy discovery and booking landscape.",
+      "market_temperature": "warm",
+      "competition_level": "high",
+      "whitespace": "Move toward itinerary operations for a specific traveler segment instead of generic inspiration.",
+      "top_signals": [
+        "Travel planning is a compelling AI demo category.",
+        "Booking power is concentrated with large incumbents.",
+        "Trust and handoff quality matter more than chat quality alone."
+      ]
+    },
+    "atlas": {
+      "nodes": [
+        {"id": "idea", "type": "idea", "label": "AI travel planner", "summary": "A planner that builds and coordinates trips automatically.", "market_signal": "Consumer convenience wedge", "position": {"x": 0, "y": 0}},
+        {"id": "mindtrip", "type": "competitor", "label": "Mindtrip", "summary": "AI trip planning experience with itinerary generation.", "market_signal": "AI-native planning", "position": {"x": -260, "y": -120}},
+        {"id": "guidegeek", "type": "competitor", "label": "GuideGeek", "summary": "Travel assistant for recommendations and trip ideas.", "market_signal": "Conversational travel help", "position": {"x": 250, "y": -140}},
+        {"id": "hopper", "type": "competitor", "label": "Hopper", "summary": "Travel app focused on bookings and price guidance.", "market_signal": "Booking plus pricing", "position": {"x": -190, "y": 140}},
+        {"id": "segment", "type": "segment", "label": "Consumer trip assistants", "summary": "Products that help users discover and plan leisure travel.", "market_signal": "Crowded attention market", "position": {"x": 140, "y": 220}}
+      ],
+      "edges": [
+        {"id": "e1", "source": "idea", "target": "mindtrip", "type": "competes_with", "label": "trip planning"},
+        {"id": "e2", "source": "idea", "target": "guidegeek", "type": "competes_with", "label": "trip discovery"},
+        {"id": "e3", "source": "idea", "target": "hopper", "type": "competes_with", "label": "booking assist"},
+        {"id": "e4", "source": "mindtrip", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e5", "source": "guidegeek", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e6", "source": "hopper", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"}
+      ]
+    },
+    "competitor_details": {
+      "mindtrip": {
+        "node_id": "mindtrip",
+        "name": "Mindtrip",
+        "website": "https://mindtrip.ai",
+        "tagline": "AI-first trip planning and itinerary building.",
+        "why_it_wins": "The product is visibly built around the planning use case rather than bolting AI onto a legacy flow.",
+        "risks": ["Planning delight does not guarantee booking conversion."],
+        "pricing_hint": "Free consumer product with monetization to evolve",
+        "signals": ["Strong demo appeal", "Visual itinerary focus"],
+        "sources": ["https://mindtrip.ai"]
+      },
+      "guidegeek": {
+        "node_id": "guidegeek",
+        "name": "GuideGeek",
+        "website": "https://guidegeek.com",
+        "tagline": "Conversational travel assistant.",
+        "why_it_wins": "Low-friction way to ask travel questions and get recommendations quickly.",
+        "risks": ["Conversational helpers can feel shallow without workflow depth."],
+        "pricing_hint": "Consumer-facing distribution play",
+        "signals": ["Chat-first discovery", "Fast onboarding"],
+        "sources": ["https://guidegeek.com"]
+      },
+      "hopper": {
+        "node_id": "hopper",
+        "name": "Hopper",
+        "website": "https://hopper.com",
+        "tagline": "Travel booking with price prediction and alerts.",
+        "why_it_wins": "Owns more of the transactional workflow and can tie recommendations to conversion.",
+        "risks": ["Large incumbents can defend distribution aggressively."],
+        "pricing_hint": "Transaction-driven monetization",
+        "signals": ["Booking control", "Strong price narrative"],
+        "sources": ["https://hopper.com"]
+      }
+    },
+    "brutal_truth": null,
+    "opportunity": null,
+    "sources": [
+      "https://mindtrip.ai",
+      "https://guidegeek.com",
+      "https://hopper.com"
+    ]
+  },
+  "final_result": {
+    "idea": "AI travel planner",
+    "pulse": {
+      "idea": "AI travel planner",
+      "summary": "Consumer travel planning is easy to demo but difficult to defend. The strongest opportunities sit closer to operations, niche traveler constraints, or transaction control.",
+      "market_temperature": "warm",
+      "competition_level": "high",
+      "whitespace": "Move beyond inspiration into segment-specific itinerary execution and booking coordination.",
+      "top_signals": [
+        "Planning content alone is not enough.",
+        "Booking incumbents own transaction intent.",
+        "Niche traveler constraints can create real workflow value."
+      ]
+    },
+    "atlas": {
+      "nodes": [
+        {"id": "idea", "type": "idea", "label": "AI travel planner", "summary": "A planner that builds and coordinates trips automatically.", "market_signal": "Consumer convenience wedge", "position": {"x": 0, "y": 0}},
+        {"id": "mindtrip", "type": "competitor", "label": "Mindtrip", "summary": "AI-native trip planning with itinerary generation.", "market_signal": "Strong planning UX", "position": {"x": -320, "y": -150}},
+        {"id": "guidegeek", "type": "competitor", "label": "GuideGeek", "summary": "Conversational travel assistant and inspiration layer.", "market_signal": "Discovery-first", "position": {"x": 300, "y": -160}},
+        {"id": "hopper", "type": "competitor", "label": "Hopper", "summary": "Booking-led travel app with price guidance.", "market_signal": "Transactional control", "position": {"x": -200, "y": 130}},
+        {"id": "kayak", "type": "competitor", "label": "KAYAK", "summary": "Search, comparison, and planning at massive scale.", "market_signal": "Distribution moat", "position": {"x": 260, "y": 90}},
+        {"id": "wonderplan", "type": "competitor", "label": "Wonderplan", "summary": "AI itinerary builder for leisure travelers.", "market_signal": "Itinerary-first", "position": {"x": -400, "y": 30}},
+        {"id": "segment", "type": "segment", "label": "Consumer trip assistants", "summary": "Consumer-facing discovery and itinerary products.", "market_signal": "Noisy market", "position": {"x": 20, "y": 250}},
+        {"id": "adjacent", "type": "adjacent_category", "label": "Travel operations tooling", "summary": "Tools for advisors, concierges, and managed itineraries.", "market_signal": "Higher willingness to pay", "position": {"x": 390, "y": 220}},
+        {"id": "opportunity", "type": "opportunity", "label": "Niche itinerary ops", "summary": "Build for one travel segment with complex constraints and higher service expectations.", "market_signal": "More credible wedge", "position": {"x": -10, "y": -270}}
+      ],
+      "edges": [
+        {"id": "e1", "source": "idea", "target": "mindtrip", "type": "competes_with", "label": "competes"},
+        {"id": "e2", "source": "idea", "target": "guidegeek", "type": "competes_with", "label": "competes"},
+        {"id": "e3", "source": "idea", "target": "hopper", "type": "competes_with", "label": "competes"},
+        {"id": "e4", "source": "idea", "target": "kayak", "type": "competes_with", "label": "competes"},
+        {"id": "e5", "source": "idea", "target": "wonderplan", "type": "competes_with", "label": "competes"},
+        {"id": "e6", "source": "mindtrip", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e7", "source": "guidegeek", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e8", "source": "hopper", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e9", "source": "kayak", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e10", "source": "wonderplan", "target": "segment", "type": "belongs_to_segment", "label": "belongs to"},
+        {"id": "e11", "source": "segment", "target": "adjacent", "type": "adjacent_to", "label": "move toward ops"},
+        {"id": "e12", "source": "opportunity", "target": "adjacent", "type": "opportunity_in", "label": "best wedge"}
+      ]
+    },
+    "competitor_details": {
+      "mindtrip": {
+        "node_id": "mindtrip",
+        "name": "Mindtrip",
+        "website": "https://mindtrip.ai",
+        "tagline": "AI-first trip planning and itinerary building.",
+        "why_it_wins": "Planning is the product, not a thin AI layer on top of a legacy search flow.",
+        "risks": ["Needs strong booking handoff to avoid becoming a novelty.", "Consumer retention can be episodic."],
+        "pricing_hint": "Consumer growth play",
+        "signals": ["Visual itinerary experience", "AI-native positioning"],
+        "sources": ["https://mindtrip.ai"]
+      },
+      "guidegeek": {
+        "node_id": "guidegeek",
+        "name": "GuideGeek",
+        "website": "https://guidegeek.com",
+        "tagline": "Conversational travel assistant.",
+        "why_it_wins": "Low-friction discovery experience makes it easy to capture top-of-funnel curiosity.",
+        "risks": ["Conversation without execution can feel disposable.", "Hard to prove durable retention."],
+        "pricing_hint": "Media and distribution play",
+        "signals": ["Chat-first", "Low-friction entry point"],
+        "sources": ["https://guidegeek.com"]
+      },
+      "hopper": {
+        "node_id": "hopper",
+        "name": "Hopper",
+        "website": "https://hopper.com",
+        "tagline": "Travel booking with price prediction and alerts.",
+        "why_it_wins": "Closer to booking lets the product turn insight into transaction value.",
+        "risks": ["Incumbent comparison engines remain powerful.", "Consumer acquisition is expensive."],
+        "pricing_hint": "Transaction-driven monetization",
+        "signals": ["Booking ownership", "Price narrative"],
+        "sources": ["https://hopper.com"]
+      },
+      "kayak": {
+        "node_id": "kayak",
+        "name": "KAYAK",
+        "website": "https://www.kayak.com",
+        "tagline": "Travel search and trip tools at scale.",
+        "why_it_wins": "Distribution and incumbent user behavior create a major moat.",
+        "risks": ["Legacy experience can feel less magical.", "Innovation pace may feel slower."],
+        "pricing_hint": "Ad and booking monetization",
+        "signals": ["Massive reach", "Transactional intent"],
+        "sources": ["https://www.kayak.com"]
+      },
+      "wonderplan": {
+        "node_id": "wonderplan",
+        "name": "Wonderplan",
+        "website": "https://wonderplan.ai",
+        "tagline": "AI-generated trip itineraries.",
+        "why_it_wins": "Directly addresses the itinerary generation use case with a simple promise.",
+        "risks": ["May struggle to extend beyond planning output.", "Low switching costs."],
+        "pricing_hint": "Consumer growth stage",
+        "signals": ["Quick itinerary generation", "Strong demo fit"],
+        "sources": ["https://wonderplan.ai"]
+      }
+    },
+    "brutal_truth": {
+      "title": "Brutal Truth",
+      "headline": "Trip planning is easy to show and hard to defend.",
+      "body": "If the product mostly chats about destinations and produces itineraries, it risks becoming a feature rather than a company. Large booking platforms control distribution, while smaller AI planners compete for attention with low switching costs.",
+      "bullets": [
+        "Discovery alone is not a moat.",
+        "Booking incumbents own transaction intent.",
+        "Leisure users are episodic and price sensitive."
+      ]
+    },
+    "opportunity": {
+      "title": "Opportunity",
+      "headline": "Own itinerary execution for a high-friction traveler segment.",
+      "body": "A better wedge is serving travelers with real constraints such as multi-city families, corporate group trips, or luxury concierge workflows. That creates space for deeper orchestration and higher willingness to pay.",
+      "bullets": [
+        "Pick one traveler segment with obvious complexity.",
+        "Handle handoffs, confirmations, and changes.",
+        "Charge for orchestration, not just recommendations."
+      ]
+    },
+    "sources": [
+      "https://mindtrip.ai",
+      "https://guidegeek.com",
+      "https://hopper.com",
+      "https://www.kayak.com",
+      "https://wonderplan.ai"
+    ]
+  }
+}
