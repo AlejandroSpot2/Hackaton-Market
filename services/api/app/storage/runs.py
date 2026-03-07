@@ -6,7 +6,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from ..config import settings
-from ..models import RunRecord, RunResult, RunStatus
+from ..models import DataSource, RunRecord, RunResult, RunStatus
 
 
 class RunStore:
@@ -52,6 +52,7 @@ class RunStore:
         progress_message: str | None = None,
         error_message: str | None = None,
         result: RunResult | None = None,
+        data_source: DataSource | None = None,
     ) -> RunRecord:
         record = self.get(run_id)
 
@@ -63,6 +64,8 @@ class RunStore:
             record.error_message = error_message
         if result is not None:
             record.result = result
+        if data_source is not None:
+            record.data_source = data_source
 
         record.updated_at = self._utc_now()
         return self.save(record)

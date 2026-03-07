@@ -95,7 +95,9 @@ def _run_live(run_id: str, idea: str) -> None:
         complete_dict = llm_provider.generate_deep_insights(idea, pulse_dict, exa_results)
 
         # Step 10: assign positions to final atlas nodes
-        complete_dict["atlas"]["nodes"] = assign_positions(complete_dict["atlas"]["nodes"])
+        complete_dict["atlas"]["nodes"] = assign_positions(
+            complete_dict["atlas"]["nodes"]
+        )
 
         # Step 11: validate
         complete_result = RunResult.model_validate(complete_dict)
