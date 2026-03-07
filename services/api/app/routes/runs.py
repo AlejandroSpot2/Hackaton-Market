@@ -1,4 +1,5 @@
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
+from pydantic import ValidationError
 
 from ..flows.analyze import start_analysis_flow
 from ..models import AnalyzeRequest, AnalyzeResponse, RunRecord, RunStatusResponse
@@ -24,6 +25,7 @@ async def get_run_status(run_id: str) -> RunStatusResponse:
         updated_at=record.updated_at,
         progress_message=record.progress_message,
         error_message=record.error_message,
+        data_source=record.data_source,
     )
 
 
@@ -37,3 +39,5 @@ def _get_run_or_404(run_id: str) -> RunRecord:
         return run_store.get(run_id)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=f"Run {run_id} was not found") from exc
+    except ValidationError as exc:
+        raise HTTPException(status_code=500, detail=f"Run {run_id} has corrupted data") from exc

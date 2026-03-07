@@ -41,7 +41,7 @@ export interface CompetitorDetail {
   sources: string[];
 }
 
-export interface SummaryCardData {
+export interface SummaryCard {
   title: string;
   headline: string;
   body: string;
@@ -62,8 +62,8 @@ export interface RunResult {
   pulse: PulseSummary;
   atlas: MarketAtlas;
   competitor_details: Record<string, CompetitorDetail>;
-  brutal_truth: SummaryCardData | null;
-  opportunity: SummaryCardData | null;
+  brutal_truth: SummaryCard | null;
+  opportunity: SummaryCard | null;
   sources: string[];
 }
 
@@ -76,6 +76,7 @@ export interface RunRecord {
   progress_message: string | null;
   error_message: string | null;
   result: RunResult | null;
+  data_source: "demo" | "live" | "fallback" | null;
 }
 
 export interface AnalyzeResponse {
@@ -90,4 +91,10 @@ export interface RunStatusResponse {
   updated_at: string;
   progress_message: string | null;
   error_message: string | null;
+  data_source: "demo" | "live" | "fallback" | null;
+}
+
+export interface AnalyzeRequest {
+  idea: string;
+  demo_mode: boolean;
 }
