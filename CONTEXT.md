@@ -1,4 +1,4 @@
-﻿# RealityCheck AI Project Context
+# RealityCheck AI Project Context
 
 ## One-line summary
 
@@ -26,12 +26,7 @@ Core questions:
 ## Current scaffold architecture
 
 ### Frontend
-- Next.js App Router with TypeScript
-- client-side polling on `/runs/[id]`
-- React Flow for the atlas canvas
-- a frontend view-model layer that normalizes partial or missing run payloads before components render
-- an experimental client-only Prefab shell boundary for non-atlas UI, kept behind a fallback-first toggle
-- deterministic typed props for atlas rendering
+- Next.js App Router with TypeScript\n- Tailwind CSS v4 plus a small shadcn-style primitive layer for the UI shell\n- client-side polling on `/runs/[id]`\n- React Flow for the atlas canvas\n- a frontend view-model layer that normalizes partial or missing run payloads before components render\n- an experimental client-only Prefab shell boundary for non-atlas UI, kept behind a fallback-first toggle\n- deterministic typed props for atlas rendering
 
 ### Backend
 - FastAPI routes for health, run creation, status, and result retrieval
@@ -73,3 +68,4 @@ Not part of this scaffold:
 - in-browser provider calls
 - full 3D visualization
 - chat as a required part of the flow
+

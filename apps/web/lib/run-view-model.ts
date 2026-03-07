@@ -1,4 +1,4 @@
-﻿import { STATUS_COPY, STATUS_HEADLINES, STATUS_LABELS, STATUS_ORDER } from "@/lib/constants";
+import { STATUS_COPY, STATUS_HEADLINES, STATUS_LABELS, STATUS_ORDER } from "@/lib/constants";
 import {
   MarketAtlas,
   RunRecord,
@@ -147,23 +147,23 @@ export function buildRunViewModel({ runId, statusData, record }: BuildRunViewMod
     pulseCard: pulse
       ? {
           state: "ready",
-          headline: pulse.summary || "Pulse snapshot ready",
+          headline: pulse.summary || "Initial market signal ready",
           note:
             status === "complete"
-              ? "The final synthesis has landed. Use the atlas and cards together."
-              : "Pulse arrived first so the atlas can be explored before the synthesis finishes.",
+              ? "The final synthesis is now available below. Use the atlas to compare nodes against the narrative cards."
+              : "The first pulse is ready. Explore the atlas while the final synthesis continues in the background.",
           marketTemperature: titleCase(pulse.market_temperature),
           competitionLevel: titleCase(pulse.competition_level),
-          whitespace: pulse.whitespace || "Whitespace is still being synthesized.",
+          whitespace: pulse.whitespace || "Whitespace will surface as the result is refined.",
           topSignals: Array.isArray(pulse.top_signals) ? pulse.top_signals : []
         }
       : {
           state: "waiting",
-          headline: "Market pulse is still assembling",
-          note: "Queued and running states reserve this space before the first pulse snapshot lands.",
+          headline: "The first market pulse is still being prepared",
+          note: "The run is active, but the atlas and pulse are not ready to inspect yet.",
           marketTemperature: "Pending",
           competitionLevel: "Pending",
-          whitespace: "Whitespace will appear when the run reaches pulse_ready.",
+          whitespace: "Whitespace and early opening angles will appear with the first pulse.",
           topSignals: []
         },
     brutalTruthCard: normalizeSummaryCard(
@@ -172,8 +172,8 @@ export function buildRunViewModel({ runId, statusData, record }: BuildRunViewMod
       status,
       result?.brutal_truth,
       status === "pulse_ready"
-        ? "The pulse is ready. Final synthesis is still generating."
-        : "Brutal Truth is reserved until the run completes."
+        ? "The market pulse is ready. This conclusion is still being synthesized."
+        : "This card unlocks when the run reaches its final synthesis stage."
     ),
     opportunityCard: normalizeSummaryCard(
       "Opportunity",
@@ -181,8 +181,8 @@ export function buildRunViewModel({ runId, statusData, record }: BuildRunViewMod
       status,
       result?.opportunity,
       status === "pulse_ready"
-        ? "The pulse is ready. Opportunity framing is still generating."
-        : "Opportunity is reserved until the run completes."
+        ? "The atlas is ready. The strongest entry angle is still being synthesized."
+        : "This card unlocks when the run reaches its final synthesis stage."
     ),
     atlas,
     competitorDetails,

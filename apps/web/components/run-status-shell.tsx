@@ -1,4 +1,6 @@
-﻿import { StatusStrip } from "@/components/status-strip";
+import { AlertTriangle } from "lucide-react";
+
+import { StatusStrip } from "@/components/status-strip";
 import { RunViewModel } from "@/lib/types";
 
 interface RunStatusShellProps {
@@ -12,7 +14,14 @@ export function RunStatusShell({ view, error }: RunStatusShellProps) {
   return (
     <>
       <StatusStrip shell={view.statusShell} />
-      {combinedError ? <p className="alert">{combinedError}</p> : null}
+      {combinedError ? (
+        <div className="glass-panel border-rose-200/80 bg-rose-50/80 p-4 text-sm text-rose-700">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>{combinedError}</p>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

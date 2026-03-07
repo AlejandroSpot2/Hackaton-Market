@@ -52,7 +52,7 @@ export function ExperimentalPrefabShell({ section, view, error = null, fallback 
         }
 
         const payload = createPrefabShellPayload(section, view, error);
-        mountHandle = mountPreview(mountNode, JSON.stringify(payload), { dark: true });
+        mountHandle = mountPreview(mountNode, JSON.stringify(payload), { dark: false });
         setRenderState("mounted");
       })
       .catch((mountError) => {

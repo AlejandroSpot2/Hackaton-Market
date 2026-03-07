@@ -1,4 +1,4 @@
-﻿# RealityCheck AI
+# RealityCheck AI
 
 RealityCheck AI is a hackathon MVP that turns a startup idea into a navigable market atlas.
 
@@ -8,9 +8,7 @@ The current scaffold is intentionally mock-first. It demonstrates the full happy
 - a Market Pulse partial result
 - a richer Market Atlas rendered with React Flow
 - competitor details plus Brutal Truth and Opportunity cards
-- a frontend view-model layer that tolerates partial payloads
-- an optional experimental Prefab shell boundary for non-atlas UI, with a local fallback kept as the default
-- local JSON persistence for runs and fixtures
+- a frontend view-model layer that tolerates partial payloads\n- a light editorial glassmorphism shell built with Tailwind CSS v4 and small shadcn-style primitives\n- an optional experimental Prefab shell boundary for non-atlas UI, with a local fallback kept as the default\n- local JSON persistence for runs and fixtures
 
 ## Repository layout
 
@@ -120,3 +118,4 @@ The backend picks a fixture by keyword and personalizes the idea node with the s
 - richer atlas clustering and ranking heuristics
 - a verified Prefab protocol mapping if the shell experiment is kept
 - optional chat over saved run results
+

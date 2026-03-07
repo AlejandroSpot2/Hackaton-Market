@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "motion/react";
+import { Compass, RefreshCcw, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { AtlasCanvas } from "@/components/atlas-canvas";
@@ -8,14 +10,31 @@ import { DetailPanel } from "@/components/detail-panel";
 import { ExperimentalPrefabShell } from "@/components/experimental-prefab-shell";
 import { RunStatusShell } from "@/components/run-status-shell";
 import { RunSummaryShell } from "@/components/run-summary-shell";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { fetchRunSnapshot, RunSnapshot } from "@/lib/api";
 import { buildRunViewModel } from "@/lib/run-view-model";
+import { cn } from "@/lib/utils";
 
 interface RunWorkspaceProps {
   runId: string;
 }
 
-const HERO_SIGILS = ["Atlas-first", "Pulse before synthesis", "Persistent run state"];
+const HERO_SIGILS = ["Atlas-first workspace", "Pulse before synthesis", "Persisted run state"];
+
+function badgeVariant(status: string) {
+  switch (status) {
+    case "complete":
+      return "success" as const;
+    case "failed":
+      return "destructive" as const;
+    case "running":
+    case "pulse_ready":
+      return "warning" as const;
+    default:
+      return "secondary" as const;
+  }
+}
 
 export function RunWorkspace({ runId }: RunWorkspaceProps) {
   const [snapshot, setSnapshot] = useState<RunSnapshot | null>(null);
@@ -58,7 +77,7 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
           return;
         }
 
-        setError(pollError instanceof Error ? pollError.message : "Could not load the run.");
+        setError(pollError instanceof Error ? pollError.message : "Could not reach the analysis workspace.");
       }
     }
 
@@ -78,59 +97,93 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
   const view = snapshot?.view ?? buildRunViewModel({ runId, statusData: null, record: null });
   const atlasNodes = view.atlas?.nodes ?? [];
   const selectedNode = atlasNodes.find((node) => node.id === selectedNodeId) ?? null;
-  const selectedDetail = selectedNode ? view.competitorDetails[selectedNode.id] ?? null : null;
+  const selectedDetail = view.competitorDetails[selectedNode?.id ?? ""] ?? null;
 
   return (
-    <div className="run-layout run-layout--observatory">
-      <section className="surface hero-card run-header observatory-hero">
-        <div className="observatory-hero-copy">
-          <p className="eyebrow">RealityCheck AI</p>
-          <h1>{view.idea}</h1>
-          <p className="hero-copy compact">
-            The observatory stays atlas-first. The market pulse appears early, the codex keeps updating, and the explorable terrain remains the main event for <span className="mono">{runId}</span>.
-          </p>
-          <div className="hero-sigils" aria-label="Product traits">
-            {HERO_SIGILS.map((sigil) => (
-              <span key={sigil} className="scene-pill">
-                {sigil}
-              </span>
-            ))}
+    <div className="app-shell space-y-5">
+      <motion.section
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="glass-panel glass-panel-strong p-7 sm:p-9"
+      >
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="space-y-5">
+            <div className="flex flex-wrap gap-2">
+              <span className="glass-chip">RealityCheck AI</span>
+              <span className="glass-chip">Run ID {runId.slice(-8)}</span>
+            </div>
+
+            <div className="space-y-4">
+              <p className="section-kicker">Live market workspace</p>
+              <h1 className="font-serif text-4xl tracking-[-0.05em] text-foreground sm:text-5xl lg:text-6xl">{view.idea}</h1>
+              <p className="hero-body max-w-[72ch]">
+                This saved run keeps the atlas in view while the backend updates the pulse and synthesis surfaces around it.
+                The graph is still the center of the product, not a supporting diagram.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2.5">
+              {HERO_SIGILS.map((sigil) => (
+                <span key={sigil} className="glass-chip">
+                  {sigil}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col items-start gap-3 xl:items-end">
+            <Badge variant={badgeVariant(view.status)}>{view.statusShell.label}</Badge>
+            <Link className={cn(buttonVariants({ variant: "secondary" }), "no-underline")} href="/">
+              Analyze another idea
+            </Link>
           </div>
         </div>
+      </motion.section>
 
-        <div className="run-header-actions">
-          <span className={`status-badge ${view.status}`}>{view.statusShell.label}</span>
-          <Link className="back-link" href="/">
-            Analyze another idea
-          </Link>
-        </div>
-      </section>
+      <ExperimentalPrefabShell section="status" view={view} error={error} fallback={<RunStatusShell error={error} view={view} />} />
 
-      <section className="surface observatory-shell">
-        <ExperimentalPrefabShell
-          section="status"
-          view={view}
-          error={error}
-          fallback={<RunStatusShell error={error} view={view} />}
-        />
-
-        <div className="workspace-grid observatory-grid">
-          <section className="atlas-panel observatory-atlas">
-            <div className="panel-header atlas-header">
-              <div>
-                <p className="eyebrow">Explorable space</p>
-                <h2>The atlas is staged as floating territory, not a static diagram.</h2>
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.05, ease: "easeOut" }}
+        className="glass-panel glass-panel-strong p-4 sm:p-5 lg:p-6"
+      >
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.55fr)_380px]">
+          <section className="space-y-4">
+            <div className="flex flex-col gap-4 rounded-[1.8rem] border border-white/75 bg-white/44 p-5 backdrop-blur-xl lg:flex-row lg:items-start lg:justify-between">
+              <div className="space-y-2.5">
+                <p className="section-kicker">Market atlas</p>
+                <h2 className="font-serif text-3xl tracking-[-0.03em] text-foreground">Explore the graph while the synthesis keeps updating.</h2>
               </div>
-              <p className="muted">Pan, zoom, and select islands to pull their field notes into the codex without losing the wider market shape.</p>
+              <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+                Focus a node to inspect supporting detail without losing the structure of the market around it.
+              </p>
             </div>
+
+            <div className="flex flex-wrap gap-3">
+              <div className="glass-chip">
+                <Compass className="h-3.5 w-3.5" />
+                Pan and zoom enabled
+              </div>
+              <div className="glass-chip">
+                <Sparkles className="h-3.5 w-3.5" />
+                Progressive states preserved
+              </div>
+              <div className="glass-chip">
+                <RefreshCcw className="h-3.5 w-3.5" />
+                Polling every 2.5 seconds
+              </div>
+            </div>
+
             <AtlasCanvas atlas={view.atlas} selectedNodeId={selectedNodeId} onSelectNode={setSelectedNodeId} />
           </section>
 
           <DetailPanel node={selectedNode} detail={selectedDetail} />
         </div>
+      </motion.section>
 
-        <ExperimentalPrefabShell section="summary" view={view} fallback={<RunSummaryShell view={view} />} />
-      </section>
+      <ExperimentalPrefabShell section="summary" view={view} fallback={<RunSummaryShell view={view} />} />
     </div>
   );
 }
