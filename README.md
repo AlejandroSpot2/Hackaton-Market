@@ -1,121 +1,156 @@
 # RealityCheck AI
 
-RealityCheck AI is a hackathon MVP that turns a startup idea into a navigable market atlas.
+> Turn a startup idea into a navigable market atlas in under 60 seconds.
 
-The current scaffold is intentionally mock-first. It demonstrates the full happy path with:
-- a landing page for idea intake
-- a run page with polling and progressive statuses
-- a Market Pulse partial result
-- a richer Market Atlas rendered with React Flow
-- competitor details plus Brutal Truth and Opportunity cards
-- a frontend view-model layer that tolerates partial payloads\n- a light editorial glassmorphism shell built with Tailwind CSS v4 and small shadcn-style primitives\n- an optional experimental Prefab shell boundary for non-atlas UI, with a local fallback kept as the default\n- local JSON persistence for runs and fixtures
+RealityCheck AI is a market intelligence tool for founders. Enter a SaaS or AI software idea and the platform generates a live, interactive atlas of competitors, market segments, adjacencies, and opportunity wedges — powered by real web research via Exa and analysis via Google Gemini.
 
-## Repository layout
+---
 
-```text
-apps/web            Next.js frontend
-services/api        FastAPI gateway and lightweight flow runner
-data/runs           persisted runtime run files
-data/fixtures       demo result bundles for mock analysis
-docs                product and architecture notes
-plans               task plans for larger changes
+## What it does
+
+Most founders spend weeks doing manual market research before they can answer basic questions: *Who are my real competitors? Which segment should I enter first? Where is the whitespace?*
+
+RealityCheck AI compresses that process into a single run. The result is a structured, visual market map — not a report, not a slide deck, but an explorable graph you can reason with.
+
+---
+
+## How it works
+
+1. You submit a startup idea in plain language (problem + buyer + software wedge)
+2. The backend searches the web for real competitors using **Exa neural search**
+3. **Google Gemini** analyzes the results and generates a structured market atlas
+4. The frontend renders a live, draggable graph that updates in stages:
+   - `queued → running → pulse_ready → complete`
+5. The final atlas includes competitor details, segment clusters, adjacent categories, a brutal truth card, and an opportunity wedge
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 14, React Flow, Tailwind CSS, shadcn/ui |
+| Backend | FastAPI, Python 3.11+ |
+| LLM | Google Gemini 3 Flash via GMI Cloud |
+| Search | Exa neural search |
+| Storage | Local JSON (file-based run persistence) |
+| Polling | 2.5s frontend polling over REST |
+
+---
+
+## Project structure
+
+```
+Hackaton-Market/
+├── apps/
+│   └── web/                  # Next.js frontend
+│       ├── app/              # App router pages
+│       ├── components/       # UI components (atlas, forms, cards)
+│       └── lib/              # API client, types, view models
+├── services/
+│   └── api/                  # FastAPI backend
+│       └── app/
+│           ├── flows/        # Run orchestration (analyze.py)
+│           ├── providers/    # Exa + Gemini integrations
+│           ├── models.py     # Pydantic schemas
+│           ├── storage/      # JSON run persistence
+│           └── utils/        # Layout engine for atlas nodes
+└── plans/                    # Design and architecture notes
 ```
 
-## Run lifecycle
+---
 
-Every analysis run moves through these states:
-- `queued`
-- `running`
-- `pulse_ready`
-- `complete`
-- `failed`
+## Getting started
 
-The web app polls the API every 2.5 seconds on the run page and renders the latest partial or final payload.
+### Prerequisites
 
-## Local setup
+- Python 3.11+
+- Node.js 18+
+- A GMI Cloud API key (for Gemini 3 Flash)
+- An Exa API key
 
-### 1. API
+### Backend
 
 ```bash
 cd services/api
-python -m venv .venv
-.venv\Scripts\activate
+cp .env.example .env
+# Add your GMI_API_KEY and EXA_API_KEY to .env
 pip install -r requirements.txt
-copy .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
-The API now accepts common local browser origins like `localhost`, `127.0.0.1`, and `[::1]` across ports, so Next.js can move from `3000` to `3001` without breaking analyze requests.
-
-### 2. Web
+### Frontend
 
 ```bash
 cd apps/web
+cp .env.example .env.local
 npm install
-copy .env.example .env.local
 npm run dev
 ```
 
-`NEXT_PUBLIC_ENABLE_PREFAB_SHELL` stays `false` by default. Turn it on only if you explicitly want to test the isolated client-only Prefab shell experiment for the status and summary surfaces.
+Open [http://localhost:3000](http://localhost:3000).
 
-### 3. Open the app
+---
 
-Visit [http://localhost:3000](http://localhost:3000).
+## Environment variables
 
-Set the web API base URL to `http://localhost:8000` unless you expose the API elsewhere.
-
-## API contract
-
-### `GET /health`
-Returns a simple health payload.
-
-### `POST /analyze`
-Creates a queued run and starts a lightweight local background flow.
-
-Request body:
-
-```json
-{
-  "idea": "AI assistant for small dental clinics in LatAm",
-  "demo_mode": true
-}
+**`services/api/.env`**
+```
+GMI_API_KEY=your_gmi_cloud_key
+EXA_API_KEY=your_exa_key
 ```
 
-Response body:
-
-```json
-{
-  "run_id": "run_20260307123000_ab12cd34",
-  "status": "queued"
-}
+**`apps/web/.env.local`**
+```
+NEXT_PUBLIC_DEMO_MODE=false
 ```
 
-### `GET /runs/{run_id}/status`
-Returns run metadata, timestamps, and the latest status.
+---
 
-### `GET /runs/{run_id}/result`
-Returns the full run record, including the latest partial or final result payload.
+## Run modes
 
-## Demo fixtures
+| Mode | Description |
+|---|---|
+| **Demo** | Uses pre-built fixture data. Instant, no API keys needed. |
+| **Live AI** | Calls Exa + Gemini in real time. Enable via the checkbox on the form. ~$0.05/run. |
 
-The scaffold ships with three fixture bundles:
-- AI job application agent
-- AI mobile coding copilot
-- AI travel planner
+---
 
-The backend picks a fixture by keyword and personalizes the idea node with the submitted prompt.
+## API
 
-## What is mocked
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/analyze` | Start a new analysis run |
+| `GET` | `/runs/{run_id}/status` | Poll run status and result |
 
-- some semantic reasoning and web research paths still fall back to fixtures
-- the Prefab shell is experimental and defaults to the local React fallback
-- Prefect infrastructure beyond a lightweight local flow wrapper
+**Start a run:**
+```bash
+curl -X POST http://localhost:8000/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"idea": "AI job application agent for software engineers", "demo_mode": false}'
+```
 
-## What remains for the second pass
+---
 
-- real provider hardening in `services/api/app/providers/`
-- deeper evidence handling and source scoring
-- richer atlas clustering and ranking heuristics
-- a verified Prefab protocol mapping if the shell experiment is kept
-- optional chat over saved run results
+## Run lifecycle
 
+```
+queued → running → pulse_ready → complete
+                              ↘ failed
+```
+
+- **pulse_ready** — competitor nodes and market pulse available, atlas is live
+- **complete** — full atlas with brutal truth card and opportunity wedge
+- **failed** — error message available in run status
+
+---
+
+## Sponsors & powered by
+
+- [GMI Cloud](https://gmi-serving.com) — Gemini 3 Flash inference
+- [Exa](https://exa.ai) — neural web search
+
+
+## License
+
+MIT
