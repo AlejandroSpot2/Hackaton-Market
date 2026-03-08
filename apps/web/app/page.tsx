@@ -18,13 +18,18 @@ export default function HomePage() {
       color: "#eef2ff",
     }}>
       <div style={{ width: "100%", maxWidth: 660, display: "flex", flexDirection: "column", alignItems: "center", gap: 36 }}>
-        {/* Logo mark */}
+        {/* Logo mark — sleek geometric R */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 60, height: 60, borderRadius: 18, display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 30, background: "linear-gradient(135deg,rgba(245,158,11,0.18),rgba(167,139,250,0.18))",
-            border: "1px solid rgba(255,255,255,0.09)",
-          }}>🧠</div>
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="2" y="2" width="44" height="44" rx="14" fill="rgba(7,15,28,0.95)" stroke="rgba(99,120,170,0.25)" strokeWidth="1.5" />
+            <text x="50%" y="54%" textAnchor="middle" dominantBaseline="middle" fontSize="22" fontWeight="800" fill="url(#rGrad)" fontFamily="Inter,sans-serif">R</text>
+            <defs>
+              <linearGradient id="rGrad" x1="0" y1="0" x2="48" y2="48">
+                <stop offset="0%" stopColor="#f59e0b" />
+                <stop offset="100%" stopColor="#a78bfa" />
+              </linearGradient>
+            </defs>
+          </svg>
           <span style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,158,11,0.75)", fontWeight: 600 }}>
             RealityCheck AI
           </span>

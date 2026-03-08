@@ -1,110 +1,78 @@
 import { AtlasNode, CompetitorDetail } from "@/lib/types";
 
-const TYPE_STYLES: Record<string, { label: string; color: string; bg: string }> = {
-  idea: { label: "Core Idea", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/20" },
-  competitor: { label: "Competitor", color: "text-emerald-400", bg: "bg-emerald-400/10 border-emerald-400/20" },
-  segment: { label: "Market Segment", color: "text-sky-400", bg: "bg-sky-400/10 border-sky-400/20" },
-  adjacent_category: { label: "Adjacent Market", color: "text-orange-400", bg: "bg-orange-400/10 border-orange-400/20" },
-  opportunity: { label: "Opportunity", color: "text-yellow-400", bg: "bg-yellow-400/10 border-yellow-400/20" },
+const TYPE_META: Record<string, { label: string; color: string; bg: string }> = {
+  idea: { label: "Core Idea", color: "#f59e0b", bg: "rgba(245,158,11,0.1)" },
+  competitor: { label: "Competitor", color: "#22c55e", bg: "rgba(34,197,94,0.1)" },
+  segment: { label: "Market Segment", color: "#38bdf8", bg: "rgba(56,189,248,0.1)" },
+  adjacent_category: { label: "Adjacent Market", color: "#f97316", bg: "rgba(249,115,22,0.1)" },
+  opportunity: { label: "Opportunity", color: "#facc15", bg: "rgba(250,204,21,0.1)" },
 };
 
-interface DetailPanelProps {
-  node: AtlasNode | null;
-  detail: CompetitorDetail | null;
-}
+interface DetailPanelProps { node: AtlasNode | null; detail: CompetitorDetail | null; }
 
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-1.5">
-      <span className="text-[9px] uppercase tracking-[0.14em] text-sky-400 font-semibold">{label}</span>
-      {children}
-    </div>
-  );
-}
+const card: React.CSSProperties = { borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(7,15,28,0.97)", padding: 20, display: "flex", flexDirection: "column", gap: 16 };
+const secLabel: React.CSSProperties = { fontSize: 9, textTransform: "uppercase", letterSpacing: "0.14em", color: "#38bdf8", fontWeight: 600, margin: "0 0 4px" };
+const bodyText: React.CSSProperties = { fontSize: 12, color: "#7e90b8", lineHeight: 1.6, margin: 0 };
 
 export function DetailPanel({ node, detail }: DetailPanelProps) {
   if (!node) {
     return (
-      <aside className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)] p-5 flex flex-col gap-3">
-        <p className="text-[10px] uppercase tracking-[0.12em] text-amber-400/80 font-semibold">Node Detail</p>
-        <p className="text-sm text-muted">Select any node in the atlas to inspect its market role.</p>
+      <aside style={card}>
+        <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(245,158,11,0.7)", fontWeight: 600, margin: 0 }}>Node Detail</p>
+        <p style={{ fontSize: 13, color: "#7e90b8", margin: 0 }}>Select any node in the atlas to inspect its market role.</p>
       </aside>
     );
   }
 
-  const s = TYPE_STYLES[node.type] ?? TYPE_STYLES.idea;
+  const t = TYPE_META[node.type] ?? TYPE_META.idea;
 
   return (
-    <aside className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)] p-5 flex flex-col gap-4 overflow-y-auto max-h-[600px] animate-slide-in">
+    <aside style={{ ...card, overflow: "auto", maxHeight: 600 }}>
       <div>
-        <p className="text-[10px] uppercase tracking-[0.12em] text-amber-400/80 font-semibold mb-2">Node Detail</p>
-        <span className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded border ${s.bg} ${s.color}`}>
-          {s.label}
+        <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(245,158,11,0.7)", fontWeight: 600, margin: "0 0 8px" }}>Node Detail</p>
+        <span style={{ display: "inline-block", fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, padding: "2px 8px", borderRadius: 4, background: t.bg, color: t.color, border: `1px solid ${t.color}30` }}>
+          {t.label}
         </span>
-        <h2 className="text-base font-bold text-slate-100 mt-2 leading-snug">{node.label}</h2>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: "#eef2ff", margin: "8px 0 0", lineHeight: 1.3 }}>{node.label}</h2>
       </div>
 
-      <Section label="Summary">
-        <p className="text-[12px] text-muted leading-relaxed">{node.summary}</p>
-      </Section>
-
-      <Section label="Market Signal">
-        <p className="text-[12px] text-slate-300 leading-relaxed">{node.market_signal}</p>
-      </Section>
+      <div><p style={secLabel}>Summary</p><p style={bodyText}>{node.summary}</p></div>
+      <div><p style={secLabel}>Market Signal</p><p style={{ ...bodyText, color: "#c8d7f0" }}>{node.market_signal}</p></div>
 
       {detail && (
         <>
-          <Section label="Positioning">
-            <p className="text-[12px] text-muted leading-relaxed">{detail.tagline}</p>
-          </Section>
-
-          <Section label="Why It Wins">
-            <p className="text-[12px] text-emerald-300/80 leading-relaxed">{detail.why_it_wins}</p>
-          </Section>
-
-          {detail.pricing_hint && (
-            <Section label="Pricing Hint">
-              <p className="text-[12px] text-muted">{detail.pricing_hint}</p>
-            </Section>
-          )}
-
+          <div><p style={secLabel}>Positioning</p><p style={bodyText}>{detail.tagline}</p></div>
+          <div><p style={secLabel}>Why It Wins</p><p style={{ ...bodyText, color: "rgba(34,197,94,0.75)" }}>{detail.why_it_wins}</p></div>
+          {detail.pricing_hint && <div><p style={secLabel}>Pricing</p><p style={bodyText}>{detail.pricing_hint}</p></div>}
           {detail.risks?.length > 0 && (
-            <Section label="Risks">
-              <ul className="space-y-1">
-                {detail.risks.map((r) => (
-                  <li key={r} className="text-[12px] text-rose-300/80 flex gap-1.5">
-                    <span className="text-rose-500 mt-0.5 flex-shrink-0">▸</span>{r}
-                  </li>
-                ))}
-              </ul>
-            </Section>
+            <div>
+              <p style={secLabel}>Risks</p>
+              {detail.risks.map((r) => (
+                <p key={r} style={{ ...bodyText, color: "rgba(248,113,113,0.75)", display: "flex", gap: 6 }}>
+                  <span style={{ color: "#f87171", flexShrink: 0 }}>▸</span>{r}
+                </p>
+              ))}
+            </div>
           )}
-
           {detail.signals?.length > 0 && (
-            <Section label="Signals">
-              <ul className="space-y-1">
-                {detail.signals.map((sig) => (
-                  <li key={sig} className="text-[12px] text-sky-300/80 flex gap-1.5">
-                    <span className="text-sky-500 mt-0.5 flex-shrink-0">▸</span>{sig}
-                  </li>
-                ))}
-              </ul>
-            </Section>
+            <div>
+              <p style={secLabel}>Signals</p>
+              {detail.signals.map((s) => (
+                <p key={s} style={{ ...bodyText, color: "rgba(56,189,248,0.75)", display: "flex", gap: 6 }}>
+                  <span style={{ color: "#38bdf8", flexShrink: 0 }}>▸</span>{s}
+                </p>
+              ))}
+            </div>
           )}
-
           {detail.sources?.length > 0 && (
-            <Section label="Sources">
-              <ul className="space-y-1">
-                {detail.sources.map((src) => (
-                  <li key={src}>
-                    <a href={src} target="_blank" rel="noreferrer"
-                      className="text-[11px] text-sky-400 hover:underline break-all">
-                      {src}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </Section>
+            <div>
+              <p style={secLabel}>Sources</p>
+              {detail.sources.map((src) => (
+                <p key={src} style={{ margin: "2px 0" }}>
+                  <a href={src} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: "#38bdf8", textDecoration: "none", wordBreak: "break-all" }}>{src}</a>
+                </p>
+              ))}
+            </div>
           )}
         </>
       )}

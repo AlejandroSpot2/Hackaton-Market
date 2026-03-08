@@ -1,17 +1,21 @@
+"use client";
+
+import { useParams } from "next/navigation";
 import { RunWorkspace } from "@/components/run-workspace";
 
-interface RunPageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
-
-export default async function RunPage({ params }: RunPageProps) {
-  const { id } = await params;
-
+export default function RunPage() {
+  const { id } = useParams<{ id: string }>();
   return (
-    <main className="max-w-[1380px] mx-auto px-4 py-7 pb-16 overflow-x-hidden">
-      <RunWorkspace runId={id} />
-    </main>
+    <div style={{
+      minHeight: "100vh",
+      background: "#050c18",
+      fontFamily: "'Inter','Segoe UI',sans-serif",
+      color: "#eef2ff",
+      padding: "24px clamp(12px, 3vw, 32px)",
+    }}>
+      <div style={{ maxWidth: 1380, margin: "0 auto" }}>
+        <RunWorkspace runId={id} />
+      </div>
+    </div>
   );
 }

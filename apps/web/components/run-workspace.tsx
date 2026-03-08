@@ -14,45 +14,37 @@ import { SummaryCard } from "@/components/summary-card";
 
 interface RunWorkspaceProps { runId: string; }
 
+/* shared styles */
+const S = {
+  page: { fontFamily: "'Inter','Segoe UI',sans-serif", color: "#eef2ff", display: "flex", flexDirection: "column" as const, gap: 16 },
+  card: { borderRadius: 16, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(7,15,28,0.97)" },
+  eyebrow: { fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase" as const, fontWeight: 600 },
+  muted: { color: "#7e90b8" },
+} as const;
+
 export function RunWorkspace({ runId }: RunWorkspaceProps) {
   const [statusData, setStatusData] = useState<RunStatusResponse | null>(null);
   const [record, setRecord] = useState<RunRecord | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /* ── Polling ── */
+  /* Polling */
   useEffect(() => {
-    let mounted = true;
-    let intervalId: number | undefined;
-
+    let mounted = true; let iv: number | undefined;
     async function poll() {
       try {
         const [st, rec] = await Promise.all([fetchRunStatus(runId), fetchRunResult(runId)]);
         if (!mounted) return;
         setStatusData(st); setRecord(rec); setError(null);
         const nodes = rec.result?.atlas.nodes ?? [];
-        if (nodes.length > 0)
-          setSelectedNodeId((cur) => (cur && nodes.some((n) => n.id === cur) ? cur : nodes[0].id));
-        if (st.status === "complete" || st.status === "failed") window.clearInterval(intervalId);
-      } catch (e) {
-        if (mounted) setError(e instanceof Error ? e.message : "Poll error.");
-      }
+        if (nodes.length) setSelectedNodeId((c) => (c && nodes.some((n) => n.id === c) ? c : nodes[0].id));
+        if (st.status === "complete" || st.status === "failed") window.clearInterval(iv);
+      } catch (e) { if (mounted) setError(e instanceof Error ? e.message : "Poll error."); }
     }
-
     void poll();
-    intervalId = window.setInterval(poll, 2500);
-    return () => { mounted = false; if (intervalId) window.clearInterval(intervalId); };
+    iv = window.setInterval(poll, 2500);
+    return () => { mounted = false; if (iv) window.clearInterval(iv); };
   }, [runId]);
-
-  /* ── Scroll reveal ── */
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      (es) => es.forEach((e) => { if (e.isIntersecting) e.target.classList.add("opacity-100", "translate-y-0"); }),
-      { threshold: 0.08 }
-    );
-    document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, [record]);
 
   const result = record?.result ?? null;
   const status = statusData?.status ?? record?.status ?? "queued";
@@ -63,152 +55,128 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
   const competitorNames = Object.values(result?.competitor_details ?? {}).map((c) => c.name);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div style={S.page}>
       {/* ── Header ── */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)] px-6 py-4 flex items-center justify-between gap-4">
+      <div style={{ ...S.card, padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.14em] text-amber-400/80 font-semibold mb-1">RealityCheck AI</p>
-          <h1 className="text-xl font-extrabold tracking-tight text-slate-100 leading-tight">
+          <p style={{ ...S.eyebrow, color: "rgba(245,158,11,0.7)", margin: "0 0 4px" }}>RealityCheck AI</p>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "#eef2ff" }}>
             {record?.idea ?? "Preparing analysis…"}
           </h1>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
           {record?.data_source && (
-            <span className="text-[10px] font-semibold px-3 py-1 rounded-full border border-sky-500/30 bg-sky-500/10 text-sky-400">
+            <span style={{ fontSize: 10, fontWeight: 600, padding: "4px 12px", borderRadius: 999, border: "1px solid rgba(56,189,248,0.25)", background: "rgba(56,189,248,0.08)", color: "#38bdf8" }}>
               {record.data_source === "demo" ? "📦 Demo" : record.data_source === "live" ? "🌐 Live" : "🔄 Fallback"}
             </span>
           )}
-          <Link href="/"
-            className="text-[11px] px-3 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/8 text-slate-300 hover:border-amber-500/40 transition-all">
+          <Link href="/" style={{ fontSize: 11, padding: "6px 14px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", color: "#c8d7f0", textDecoration: "none" }}>
             ← New idea
           </Link>
         </div>
       </div>
 
-      {error && (
-        <p className="text-sm text-rose-300 border border-rose-500/30 bg-rose-500/10 rounded-xl px-4 py-3">{error}</p>
-      )}
+      {error && <p style={{ fontSize: 13, color: "#fca5a5", border: "1px solid rgba(248,113,113,0.25)", borderRadius: 12, padding: "10px 14px", background: "rgba(248,113,113,0.06)", margin: 0 }}>{error}</p>}
 
-      {/* ── Two-column layout: main | agent console ── */}
-      <div className="grid gap-4" style={{ gridTemplateColumns: "minmax(0,1fr) 280px" }}>
-
-        {/* ── Left: everything ── */}
-        <div className="flex flex-col gap-4 min-w-0">
+      {/* ── Two columns ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 280px", gap: 16 }}>
+        {/* LEFT */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, minWidth: 0 }}>
           {/* Pipeline */}
-          <div className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)]">
-            <PipelineGraph status={status} />
-          </div>
+          <div style={S.card}><PipelineGraph status={status} /></div>
 
           {/* Atlas + Detail */}
-          <div className="grid gap-4" style={{ gridTemplateColumns: "minmax(0,1fr) 260px" }}>
-            <div className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)] p-4">
-              <div className="flex items-center justify-between mb-1">
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 260px", gap: 16 }}>
+            <div style={{ ...S.card, padding: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.12em] text-amber-400/80 font-semibold">Market Atlas</p>
-                  <p className="text-sm font-bold text-slate-100 mt-0.5">Competitive landscape</p>
+                  <p style={{ ...S.eyebrow, color: "rgba(245,158,11,0.7)", margin: 0 }}>Market Atlas</p>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "#eef2ff", margin: "4px 0 0" }}>Competitive landscape</p>
                 </div>
-                <p className="text-[10px] text-muted">Click node · Drag to rearrange</p>
+                <p style={{ fontSize: 10, ...S.muted, margin: 0 }}>Click node · Drag to rearrange</p>
               </div>
-              <AtlasCanvas
-                atlas={result?.atlas ?? null}
-                selectedNodeId={selectedNodeId}
-                onSelectNode={setSelectedNodeId}
-                isLoading={isLoading}
-              />
+              <AtlasCanvas atlas={result?.atlas ?? null} selectedNodeId={selectedNodeId} onSelectNode={setSelectedNodeId} isLoading={isLoading} />
             </div>
             <DetailPanel node={selectedNode} detail={selectedDetail} />
           </div>
 
-          {/* Charts row */}
+          {/* Charts */}
           {result && (
             <>
-              <div className="grid grid-cols-3 gap-4 reveal opacity-0 translate-y-4 transition-all duration-500">
-                {/* Pulse stats */}
-                <div className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)] p-5 col-span-1">
-                  <p className="text-[10px] uppercase tracking-[0.12em] text-amber-400/80 font-semibold mb-1">Market Pulse</p>
-                  <p className="text-[13px] font-semibold text-slate-200 leading-snug mt-2">{result.pulse.summary}</p>
-                  <div className="grid grid-cols-2 gap-3 mt-3 p-3 rounded-xl bg-black/20">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+                {/* Pulse */}
+                <div style={{ ...S.card, padding: 20 }}>
+                  <p style={{ ...S.eyebrow, color: "rgba(245,158,11,0.7)", margin: "0 0 4px" }}>Market Pulse</p>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", lineHeight: 1.5, margin: "8px 0 0" }}>{result.pulse.summary}</p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12, padding: 12, borderRadius: 12, background: "rgba(0,0,0,0.2)" }}>
                     <div>
-                      <p className="text-[9px] uppercase tracking-wide text-muted">Temperature</p>
-                      <p className={`text-sm font-bold mt-0.5 ${result.pulse.market_temperature === "heated" ? "text-orange-400" : result.pulse.market_temperature === "warm" ? "text-amber-400" : "text-sky-400"}`}>
+                      <p style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", ...S.muted, margin: 0 }}>Temperature</p>
+                      <p style={{ fontSize: 14, fontWeight: 700, margin: "4px 0 0", color: result.pulse.market_temperature === "heated" ? "#f97316" : result.pulse.market_temperature === "warm" ? "#f59e0b" : "#38bdf8" }}>
                         {result.pulse.market_temperature}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[9px] uppercase tracking-wide text-muted">Competition</p>
-                      <p className={`text-sm font-bold mt-0.5 ${result.pulse.competition_level === "high" ? "text-rose-400" : result.pulse.competition_level === "medium" ? "text-amber-400" : "text-emerald-400"}`}>
+                      <p style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", ...S.muted, margin: 0 }}>Competition</p>
+                      <p style={{ fontSize: 14, fontWeight: 700, margin: "4px 0 0", color: result.pulse.competition_level === "high" ? "#f87171" : result.pulse.competition_level === "medium" ? "#f59e0b" : "#22c55e" }}>
                         {result.pulse.competition_level}
                       </p>
                     </div>
                   </div>
-                  <div className="mt-3">
-                    <p className="text-[9px] uppercase tracking-wider text-sky-400 mb-1">Whitespace</p>
-                    <p className="text-[11px] text-muted leading-snug">{result.pulse.whitespace}</p>
-                  </div>
-                  <div className="mt-3">
-                    <p className="text-[9px] uppercase tracking-wider text-sky-400 mb-1.5">Top Signals</p>
-                    <ul className="space-y-1">
-                      {result.pulse.top_signals.map((s) => (
-                        <li key={s} className="flex gap-1.5 text-[11px] text-muted">
-                          <span className="text-amber-500 mt-0.5 flex-shrink-0">▸</span>{s}
-                        </li>
-                      ))}
-                    </ul>
+                  <div style={{ marginTop: 12 }}>
+                    <p style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "#38bdf8", margin: "0 0 4px" }}>Whitespace</p>
+                    <p style={{ fontSize: 11, ...S.muted, lineHeight: 1.5, margin: 0 }}>{result.pulse.whitespace}</p>
                   </div>
                 </div>
                 <SentimentGauge temperature={result.pulse.market_temperature} competitionLevel={result.pulse.competition_level} />
                 <RadarChart pulse={result.pulse} competitorNames={competitorNames} />
               </div>
 
-              {/* Bubble chart + extra stats */}
-              <div className="grid grid-cols-2 gap-4 reveal opacity-0 translate-y-4 transition-all duration-500 delay-75">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <MarketBubbleChart competitors={result.competitor_details} />
-                {/* Key metrics */}
-                <div className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)] p-5">
-                  <p className="text-[10px] uppercase tracking-[0.12em] text-muted font-semibold mb-4">Atlas Metrics</p>
-                  <div className="grid grid-cols-2 gap-4">
+                {/* Metrics */}
+                <div style={{ ...S.card, padding: 20 }}>
+                  <p style={{ ...S.eyebrow, ...S.muted, margin: "0 0 16px" }}>Atlas Metrics</p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                     {[
-                      { label: "Atlas Nodes", val: result.atlas.nodes.length, color: "text-sky-400" },
-                      { label: "Competitors", val: Object.keys(result.competitor_details).length, color: "text-emerald-400" },
-                      { label: "Atlas Edges", val: result.atlas.edges.length, color: "text-violet-400" },
-                      { label: "Sources", val: result.sources?.length ?? 0, color: "text-amber-400" },
-                    ].map(({ label, val, color }) => (
-                      <div key={label} className="bg-black/20 rounded-xl p-3">
-                        <p className={`text-3xl font-extrabold tracking-tight ${color}`}>{val}</p>
-                        <p className="text-[10px] text-muted mt-1">{label}</p>
+                      { label: "Atlas Nodes", val: result.atlas.nodes.length, col: "#38bdf8" },
+                      { label: "Competitors", val: Object.keys(result.competitor_details).length, col: "#22c55e" },
+                      { label: "Atlas Edges", val: result.atlas.edges.length, col: "#a78bfa" },
+                      { label: "Sources", val: result.sources?.length ?? 0, col: "#f59e0b" },
+                    ].map(({ label, val, col }) => (
+                      <div key={label} style={{ background: "rgba(0,0,0,0.2)", borderRadius: 12, padding: 12 }}>
+                        <p style={{ fontSize: 28, fontWeight: 800, color: col, margin: 0 }}>{val}</p>
+                        <p style={{ fontSize: 10, ...S.muted, margin: "4px 0 0" }}>{label}</p>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Competitor cards */}
-              <div className="reveal opacity-0 translate-y-4 transition-all duration-500 delay-100">
-                <CompetitorCards competitors={result.competitor_details} onSelect={setSelectedNodeId} selectedId={selectedNodeId} />
-              </div>
+              <CompetitorCards competitors={result.competitor_details} onSelect={setSelectedNodeId} selectedId={selectedNodeId} />
 
-              {/* Brutal Truth + Opportunity */}
-              <div className="grid grid-cols-2 gap-4 reveal opacity-0 translate-y-4 transition-all duration-500 delay-150">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <SummaryCard title="Brutal Truth" card={result.brutal_truth} fallback="Synthesis available at completion." variant="brutal" />
                 <SummaryCard title="Opportunity" card={result.opportunity} fallback="Opportunity framing available at completion." variant="opportunity" />
               </div>
 
               {/* Sources */}
               {result.sources?.length > 0 && (
-                <div className="rounded-2xl border border-white/[0.08] bg-[rgba(7,15,28,0.97)] p-5 reveal opacity-0 translate-y-4 transition-all duration-500 delay-200">
-                  <p className="text-[10px] uppercase tracking-[0.12em] text-muted font-semibold mb-3">Research Sources</p>
-                  <table className="w-full text-[11px]">
+                <div style={{ ...S.card, padding: 20 }}>
+                  <p style={{ ...S.eyebrow, ...S.muted, margin: "0 0 12px" }}>Research Sources</p>
+                  <table style={{ width: "100%", fontSize: 11, borderCollapse: "collapse" }}>
                     <thead>
-                      <tr className="border-b border-white/[0.07]">
-                        <th className="text-left text-muted pb-2 pr-4 w-8">#</th>
-                        <th className="text-left text-muted pb-2">URL</th>
+                      <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                        <th style={{ textAlign: "left", ...S.muted, paddingBottom: 8, width: 32 }}>#</th>
+                        <th style={{ textAlign: "left", ...S.muted, paddingBottom: 8 }}>URL</th>
                       </tr>
                     </thead>
                     <tbody>
                       {result.sources.map((s, i) => (
-                        <tr key={s} className="border-b border-white/[0.04]">
-                          <td className="py-2 pr-4 text-muted">{i + 1}</td>
-                          <td className="py-2"><a href={s} target="_blank" rel="noreferrer" className="text-sky-400 hover:underline break-all">{s}</a></td>
+                        <tr key={s} style={{ borderBottom: "1px solid rgba(255,255,255,0.03)" }}>
+                          <td style={{ padding: "8px 0", ...S.muted }}>{i + 1}</td>
+                          <td style={{ padding: "8px 0" }}>
+                            <a href={s} target="_blank" rel="noreferrer" style={{ color: "#38bdf8", textDecoration: "none", wordBreak: "break-all" }}>{s}</a>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -216,21 +184,27 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
                 </div>
               )}
 
-              {/* Final Summary */}
+              {/* Final banner */}
               {status === "complete" && (
-                <div className="rounded-2xl border border-amber-500/25 bg-gradient-to-br from-amber-900/10 to-[rgba(7,15,28,0.97)] p-6 reveal opacity-0 translate-y-4 transition-all duration-500 delay-200">
-                  <p className="text-[10px] uppercase tracking-[0.14em] text-amber-400 font-semibold mb-2">🏁 Final Summary</p>
-                  <h2 className="text-lg font-extrabold text-slate-100 mb-3">{result.pulse.idea}</h2>
-                  <p className="text-[13px] text-muted leading-relaxed">{result.pulse.summary}</p>
-                  <p className="text-[13px] text-muted leading-relaxed mt-2">{result.pulse.whitespace}</p>
-                  <div className="flex flex-wrap gap-2 mt-4">
+                <div style={{
+                  ...S.card, padding: 24,
+                  borderColor: "rgba(245,158,11,0.2)",
+                  background: "linear-gradient(135deg, rgba(120,80,0,0.08), rgba(7,15,28,0.97))",
+                }}>
+                  <p style={{ ...S.eyebrow, color: "#f59e0b", margin: "0 0 8px" }}>🏁 Final Summary</p>
+                  <h2 style={{ margin: "0 0 12px", fontSize: 18, fontWeight: 800, color: "#eef2ff" }}>{result.pulse.idea}</h2>
+                  <p style={{ fontSize: 13, ...S.muted, lineHeight: 1.65, margin: 0 }}>{result.pulse.summary}</p>
+                  <p style={{ fontSize: 13, ...S.muted, lineHeight: 1.65, margin: "8px 0 0" }}>{result.pulse.whitespace}</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
                     {[
-                      { label: `🌡️ ${result.pulse.market_temperature} market`, c: "border-amber-500/30 bg-amber-500/10 text-amber-400" },
-                      { label: `⚔️ ${result.pulse.competition_level} competition`, c: "border-rose-500/30 bg-rose-500/10 text-rose-400" },
-                      { label: `${Object.keys(result.competitor_details).length} competitors`, c: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400" },
-                      { label: `${result.atlas.nodes.length} atlas nodes`, c: "border-sky-500/30 bg-sky-500/10 text-sky-400" },
-                    ].map(({ label, c }) => (
-                      <span key={label} className={`text-[10px] font-semibold px-3 py-1 rounded-full border ${c}`}>{label}</span>
+                      { label: `🌡️ ${result.pulse.market_temperature} market`, bc: "rgba(245,158,11,0.15)", tc: "#f59e0b" },
+                      { label: `⚔️ ${result.pulse.competition_level} competition`, bc: "rgba(248,113,113,0.12)", tc: "#f87171" },
+                      { label: `${Object.keys(result.competitor_details).length} competitors`, bc: "rgba(34,197,94,0.12)", tc: "#22c55e" },
+                      { label: `${result.atlas.nodes.length} atlas nodes`, bc: "rgba(56,189,248,0.12)", tc: "#38bdf8" },
+                    ].map(({ label, bc, tc }) => (
+                      <span key={label} style={{ fontSize: 10, fontWeight: 600, padding: "4px 12px", borderRadius: 999, background: bc, color: tc }}>
+                        {label}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -239,7 +213,7 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
           )}
         </div>
 
-        {/* ── Right: Agent Console ── */}
+        {/* RIGHT: Agent Console */}
         <AgentConsole status={status} progressMessage={progressMessage} />
       </div>
     </div>
