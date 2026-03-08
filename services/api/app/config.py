@@ -4,6 +4,9 @@ import os
 from pathlib import Path
 
 
+DEFAULT_LOCAL_CORS_REGEX = r"^https?://(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$"
+
+
 class Settings:
     def __init__(self) -> None:
         from dotenv import load_dotenv
@@ -19,8 +22,9 @@ class Settings:
             os.getenv("FIXTURES_DIR"),
             self.repo_root / "data" / "fixtures",
         )
-        origins = os.getenv("CORS_ORIGINS", "http://localhost:3000")
+        origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
         self.cors_origins = [origin.strip() for origin in origins.split(",") if origin.strip()]
+        self.cors_origin_regex = os.getenv("CORS_ORIGIN_REGEX", DEFAULT_LOCAL_CORS_REGEX)
         self.gmi_api_key: str | None = os.getenv("GMI_API_KEY") or None
         self.exa_api_key: str | None = os.getenv("EXA_API_KEY") or None
 

@@ -1,35 +1,118 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss" source("../");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme inline {
+  --font-sans: var(--font-manrope);
+  --font-serif: var(--font-fraunces);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-shell: var(--shell);
+  --color-shell-strong: var(--shell-strong);
+  --color-shell-soft: var(--shell-soft);
+  --color-tyrian: var(--tyrian);
+  --color-blush: var(--blush);
+  --color-lilac: var(--lilac);
+  --color-peach: var(--peach);
+  --color-mist: var(--mist);
+}
 
-/* ── Base ───────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --background: #f8f1f4;
+  --foreground: #2d1424;
+  --card: rgba(255, 255, 255, 0.68);
+  --card-foreground: #2d1424;
+  --popover: rgba(255, 255, 255, 0.82);
+  --popover-foreground: #2d1424;
+  --primary: #630330;
+  --primary-foreground: #fff8fb;
+  --secondary: #f6e2ed;
+  --secondary-foreground: #5d2443;
+  --muted: #f3e3ea;
+  --muted-foreground: #7a5e6e;
+  --accent: #ece4fb;
+  --accent-foreground: #513a67;
+  --border: rgba(99, 3, 48, 0.14);
+  --input: rgba(255, 255, 255, 0.7);
+  --ring: rgba(99, 3, 48, 0.16);
+  --shell: rgba(255, 255, 255, 0.55);
+  --shell-strong: rgba(255, 255, 255, 0.74);
+  --shell-soft: rgba(255, 255, 255, 0.38);
+  --tyrian: #630330;
+  --blush: #f6dce7;
+  --lilac: #ece4fb;
+  --peach: #f9e3d8;
+  --mist: #e3eef9;
+}
+
 @layer base {
-
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
+  * {
+    @apply box-border border-border;
   }
 
   html,
   body {
-    @apply min-h-full bg-bg text-slate-100;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    min-height: 100%;
+  }
+
+  body {
+    @apply min-w-[320px] bg-background text-foreground antialiased;
     background-image:
-      radial-gradient(ellipse at 10% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 90% 0%, rgba(167, 139, 250, 0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 100%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
-    overflow-x: hidden;
+      radial-gradient(circle at 12% 18%, rgba(99, 3, 48, 0.12), transparent 24%),
+      radial-gradient(circle at 82% 12%, rgba(168, 61, 116, 0.18), transparent 28%),
+      radial-gradient(circle at 18% 88%, rgba(236, 228, 251, 0.85), transparent 26%),
+      radial-gradient(circle at 88% 78%, rgba(227, 238, 249, 0.95), transparent 30%),
+      linear-gradient(135deg, #fffafc 0%, #f9f0f5 38%, #f5edf8 67%, #eef3fb 100%);
+  }
+
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: auto;
+    pointer-events: none;
+    z-index: -1;
+    border-radius: 999px;
+    filter: blur(80px);
+    opacity: 0.95;
+  }
+
+  body::before {
+    top: 6%;
+    right: 10%;
+    width: 20rem;
+    height: 20rem;
+    background: rgba(168, 61, 116, 0.18);
+  }
+
+  body::after {
+    bottom: 8%;
+    left: 4%;
+    width: 24rem;
+    height: 24rem;
+    background: rgba(136, 185, 221, 0.18);
   }
 
   a {
-    @apply text-sky-400 no-underline;
+    @apply text-primary underline-offset-4 transition-colors;
   }
 
   a:hover {
-    @apply underline;
+    @apply text-[#4d0226];
   }
 
   button,
@@ -38,36 +121,230 @@
   }
 }
 
-/* ── SVG flow-dash (can't be done purely in Tailwind) ── */
-@keyframes flow-dash {
-  to {
-    stroke-dashoffset: -20;
+@layer components {
+  .app-shell {
+    @apply relative mx-auto w-[min(1440px,calc(100vw-24px))] py-6 sm:w-[min(100vw-40px,1440px)] sm:py-8;
+  }
+
+  .glass-panel {
+    @apply relative overflow-hidden rounded-[30px] border border-white/70 bg-white/55 shadow-[0_24px_70px_-32px_rgba(99,3,48,0.34)] backdrop-blur-2xl;
+  }
+
+  .glass-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.1) 34%, rgba(255,255,255,0.08) 68%, rgba(168,61,116,0.08));
+  }
+
+  .glass-panel-strong {
+    @apply bg-white/68;
+  }
+
+  .glass-panel-soft {
+    @apply bg-white/44;
+  }
+
+  .section-kicker {
+    @apply text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-primary/70;
+  }
+
+  .hero-title {
+    @apply font-serif text-4xl leading-[0.98] tracking-[-0.04em] text-foreground sm:text-5xl lg:text-7xl;
+  }
+
+  .hero-body {
+    @apply max-w-[60ch] text-base leading-7 text-muted-foreground sm:text-lg;
+  }
+
+  .glass-chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/75 bg-white/52 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-primary/72 shadow-[0_12px_28px_-20px_rgba(99,3,48,0.25)] backdrop-blur-xl;
+  }
+
+  .floating-panel {
+  @apply p-4 shadow-[0_18px_48px_-30px_rgba(99,3,48,0.28)];
+  animation: hoverFloat 8s ease-in-out infinite;
+}
+
+  .panel-copy {
+    @apply text-sm leading-6 text-muted-foreground;
+  }
+
+  .atlas-canvas-shell {
+    @apply relative overflow-hidden rounded-[30px] border border-white/75 bg-white/32 backdrop-blur-xl;
+    min-height: 640px;
+  }
+
+  .atlas-canvas-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 16% 18%, rgba(168, 61, 116, 0.12), transparent 18%),
+      radial-gradient(circle at 82% 18%, rgba(136, 185, 221, 0.16), transparent 22%),
+      radial-gradient(circle at 50% 76%, rgba(236, 228, 251, 0.9), transparent 28%),
+      linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0.32));
+    pointer-events: none;
+  }
+
+  .atlas-canvas-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99, 3, 48, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99, 3, 48, 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at center, black 42%, transparent 88%);
+    pointer-events: none;
+  }
+
+  .atlas-node-shell {
+    @apply relative flex w-full flex-col gap-2 rounded-[24px] border border-white/85 bg-white/62 p-4 text-left shadow-[0_20px_50px_-34px_rgba(99,3,48,0.35)] backdrop-blur-2xl transition-all duration-300;
+  }
+
+  .atlas-node-shell::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.1));
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .atlas-node-shell.is-selected {
+    @apply -translate-y-1.5 shadow-[0_26px_64px_-28px_rgba(99,3,48,0.45)];
+  }
+
+  .atlas-node-shell--idea {
+    background: linear-gradient(180deg, rgba(255, 245, 249, 0.92), rgba(248, 221, 234, 0.72));
+  }
+
+  .atlas-node-shell--competitor {
+    background: linear-gradient(180deg, rgba(250, 246, 255, 0.92), rgba(230, 240, 250, 0.72));
+  }
+
+  .atlas-node-shell--segment {
+    background: linear-gradient(180deg, rgba(255, 247, 247, 0.94), rgba(249, 227, 216, 0.74));
+  }
+
+  .atlas-node-shell--adjacent_category {
+    background: linear-gradient(180deg, rgba(253, 244, 247, 0.92), rgba(245, 228, 242, 0.7));
+  }
+
+  .atlas-node-shell--opportunity {
+    background: linear-gradient(180deg, rgba(249, 244, 255, 0.94), rgba(235, 230, 250, 0.74));
+  }
+
+  .atlas-node-shell:hover {
+    @apply -translate-y-0.5;
+  }
+
+  .atlas-node-shell.is-selected .atlas-node-accent {
+    opacity: 1;
+  }
+
+  .atlas-node-accent {
+    @apply absolute -inset-3 -z-10 rounded-[28px] opacity-0 blur-2xl transition-opacity duration-300;
+  }
+
+  .prefab-shell-region {
+    @apply grid;
+  }
+
+  .prefab-shell-mount.is-hidden {
+    display: none;
+  }
+
+  .prefab-shell-host {
+    @apply grid;
   }
 }
 
-.svg-flow-line {
-  stroke-dasharray: 6 5;
-  animation: flow-dash 0.5s linear infinite;
+.react-flow__attribution {
+  display: none;
 }
 
-/* ── React Flow overrides ────────────────────────────── */
-.react-flow__attribution {
-  display: none !important;
+.react-flow__pane,
+.react-flow__viewport,
+.react-flow__renderer {
+  cursor: grab;
+}
+
+.react-flow__pane:active {
+  cursor: grabbing;
 }
 
 .react-flow__controls {
-  background: rgba(7, 15, 28, 0.95) !important;
-  border: 1px solid rgba(99, 120, 170, 0.2) !important;
-  border-radius: 12px !important;
-  box-shadow: none !important;
+  top: 18px;
+  right: 18px;
+  left: auto;
+  bottom: auto;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 20px 48px -32px rgba(99, 3, 48, 0.42);
+  backdrop-filter: blur(18px);
 }
 
 .react-flow__controls-button {
-  background: transparent !important;
-  border-bottom: 1px solid rgba(99, 120, 170, 0.15) !important;
-  color: #7e90b8 !important;
+  border-bottom: 1px solid rgba(99, 3, 48, 0.08);
+  background: transparent;
+  color: #630330;
 }
 
-.react-flow__controls-button:hover {
-  background: rgba(56, 189, 248, 0.1) !important;
+.react-flow__controls-button:last-child {
+  border-bottom: 0;
+}
+
+.react-flow__minimap {
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.62) !important;
+  box-shadow: 0 20px 48px -32px rgba(99, 3, 48, 0.42);
+  backdrop-filter: blur(18px);
+}
+
+@keyframes hoverFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (max-width: 1280px) {
+  .atlas-canvas-shell {
+    min-height: 560px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .atlas-canvas-shell {
+    min-height: 520px;
+  }
+}
+
+@media (max-width: 768px) {
+  body::before,
+  body::after {
+    width: 16rem;
+    height: 16rem;
+  }
+
+  .atlas-canvas-shell {
+    min-height: 460px;
+  }
+
+  .react-flow__minimap {
+    display: none;
+  }
 }
