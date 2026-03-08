@@ -1,50 +1,50 @@
-import { SummaryCard as SummaryCardType } from "@/lib/types";
+import { LockKeyhole, Sparkles } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SummaryCardViewModel } from "@/lib/types";
 
 interface SummaryCardProps {
-  title: string;
-  card: SummaryCardType | null;
-  fallback: string;
-  variant?: "brutal" | "opportunity";
+  card: SummaryCardViewModel;
 }
 
-const VARIANTS = {
-  brutal: {
-    eyebrow: "text-rose-400",
-    border: "border-rose-500/25",
-    bg: "bg-gradient-to-br from-rose-900/10 to-[rgba(7,15,28,0.97)]",
-  },
-  opportunity: {
-    eyebrow: "text-amber-400",
-    border: "border-amber-500/25",
-    bg: "bg-gradient-to-br from-amber-900/10 to-[rgba(7,15,28,0.97)]",
-  },
-};
-
-export function SummaryCard({ title, card, fallback, variant }: SummaryCardProps) {
-  const v = variant ? VARIANTS[variant] : { eyebrow: "text-amber-400/70", border: "border-white/[0.08]", bg: "" };
-
-  if (!card) {
-    return (
-      <section className={`rounded-2xl border ${v.border} ${v.bg} bg-[rgba(7,15,28,0.97)] p-5`}>
-        <p className={`text-[10px] uppercase tracking-[0.12em] font-semibold mb-2 ${v.eyebrow}`}>{title}</p>
-        <p className="text-sm text-muted">{fallback}</p>
-      </section>
-    );
-  }
-
+export function SummaryCard({ card }: SummaryCardProps) {
   return (
-    <section className={`rounded-2xl border ${v.border} ${v.bg} bg-[rgba(7,15,28,0.97)] p-5 flex flex-col gap-3`}>
-      <p className={`text-[10px] uppercase tracking-[0.12em] font-semibold ${v.eyebrow}`}>{title}</p>
-      <h3 className="text-[15px] font-bold text-slate-100 leading-snug">{card.headline}</h3>
-      <p className="text-[12px] text-muted leading-relaxed">{card.body}</p>
-      <ul className="space-y-2">
-        {card.bullets.map((b) => (
-          <li key={b} className="flex gap-2 text-[12px] text-muted">
-            <span className={`mt-0.5 flex-shrink-0 ${variant === "brutal" ? "text-rose-500" : "text-amber-500"}`}>▸</span>
-            {b}
-          </li>
-        ))}
-      </ul>
-    </section>
+    <Card className="h-full p-6">
+      <CardHeader className="gap-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2">
+            <p className="section-kicker">{card.eyebrow}</p>
+            <CardTitle>{card.title}</CardTitle>
+            <CardDescription>{card.headline}</CardDescription>
+          </div>
+          <Badge variant={card.state === "ready" ? "default" : "secondary"}>{card.state === "ready" ? "Ready" : "Pending"}</Badge>
+        </div>
+      </CardHeader>
+
+      <CardContent className="gap-5">
+        <p className="panel-copy">{card.state === "ready" ? card.body : card.fallback}</p>
+
+        {card.state === "ready" && card.bullets.length > 0 ? (
+          <ul className="grid gap-2 text-sm leading-6 text-foreground">
+            {card.bullets.map((bullet) => (
+              <li key={bullet} className="rounded-[1.2rem] border border-white/75 bg-white/58 px-4 py-3 shadow-[0_12px_30px_-24px_rgba(99,3,48,0.22)] backdrop-blur-xl">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                  <span>{bullet}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="rounded-[1.25rem] border border-dashed border-primary/18 bg-white/40 px-4 py-4 text-sm text-muted-foreground backdrop-blur-xl">
+            <div className="flex items-start gap-3">
+              <LockKeyhole className="mt-0.5 h-4 w-4 shrink-0 text-primary/65" />
+              <span>This panel stays reserved so the workspace remains stable while the final synthesis is still running.</span>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

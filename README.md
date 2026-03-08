@@ -8,7 +8,7 @@ The current scaffold is intentionally mock-first. It demonstrates the full happy
 - a Market Pulse partial result
 - a richer Market Atlas rendered with React Flow
 - competitor details plus Brutal Truth and Opportunity cards
-- local JSON persistence for runs and fixtures
+- a frontend view-model layer that tolerates partial payloads\n- a light editorial glassmorphism shell built with Tailwind CSS v4 and small shadcn-style primitives\n- an optional experimental Prefab shell boundary for non-atlas UI, with a local fallback kept as the default\n- local JSON persistence for runs and fixtures
 
 ## Repository layout
 
@@ -45,6 +45,8 @@ copy .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
+The API now accepts common local browser origins like `localhost`, `127.0.0.1`, and `[::1]` across ports, so Next.js can move from `3000` to `3001` without breaking analyze requests.
+
 ### 2. Web
 
 ```bash
@@ -53,6 +55,8 @@ npm install
 copy .env.example .env.local
 npm run dev
 ```
+
+`NEXT_PUBLIC_ENABLE_PREFAB_SHELL` stays `false` by default. Turn it on only if you explicitly want to test the isolated client-only Prefab shell experiment for the status and summary surfaces.
 
 ### 3. Open the app
 
@@ -103,13 +107,15 @@ The backend picks a fixture by keyword and personalizes the idea node with the s
 
 ## What is mocked
 
-- semantic reasoning and web research
-- provider integrations for Gemini and Exa
+- some semantic reasoning and web research paths still fall back to fixtures
+- the Prefab shell is experimental and defaults to the local React fallback
 - Prefect infrastructure beyond a lightweight local flow wrapper
 
 ## What remains for the second pass
 
-- real provider adapters in `services/api/app/providers/`
+- real provider hardening in `services/api/app/providers/`
 - deeper evidence handling and source scoring
 - richer atlas clustering and ranking heuristics
+- a verified Prefab protocol mapping if the shell experiment is kept
 - optional chat over saved run results
+
