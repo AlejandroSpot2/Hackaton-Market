@@ -162,31 +162,81 @@ interface BubbleChartProps { competitors: Record<string, { name: string; signals
 
 function sigStr(c: { signals?: string[]; why_it_wins?: string }) { return Math.min(1, 0.35 + (c.signals?.length ?? 0) * 0.1 + (c.why_it_wins?.length ?? 0) / 350); }
 
+const BUBBLE_PALETTE = [
+    { base: "#f87171", stroke: "rgba(248,113,113,0.75)", fill: "rgba(248,113,113,0.13)", line: "rgba(248,113,113,0.45)" },
+    { base: "#a78bfa", stroke: "rgba(167,139,250,0.75)", fill: "rgba(167,139,250,0.13)", line: "rgba(167,139,250,0.45)" },
+    { base: "#f97316", stroke: "rgba(249,115,22,0.75)",  fill: "rgba(249,115,22,0.13)",  line: "rgba(249,115,22,0.45)"  },
+    { base: "#38bdf8", stroke: "rgba(56,189,248,0.75)",  fill: "rgba(56,189,248,0.13)",  line: "rgba(56,189,248,0.45)"  },
+    { base: "#facc15", stroke: "rgba(250,204,21,0.75)",  fill: "rgba(250,204,21,0.13)",  line: "rgba(250,204,21,0.45)"  },
+    { base: "#fb7185", stroke: "rgba(251,113,133,0.75)", fill: "rgba(251,113,133,0.13)", line: "rgba(251,113,133,0.45)" },
+];
+const GREEN_BUBBLE = { base: "#22c55e", stroke: "rgba(34,197,94,0.9)", fill: "rgba(34,197,94,0.2)", line: "rgba(34,197,94,0.7)" };
+
 export function MarketBubbleChart({ competitors }: BubbleChartProps) {
+    const [selected, setSelected] = useState<string | null>(null);
     const entries = Object.values(competitors);
     if (!entries.length) return null;
-    const W = 280, H = 140, cx = W / 2, cy = H / 2;
+
+    const W = 340, H = 210, cx = W / 2, cy = H / 2;
     const angles = entries.map((_, i) => (360 / entries.length) * i);
-    const BUBBLE_COLORS = ["#f87171", "#22c55e", "#f97316", "#a78bfa", "#38bdf8"];
 
     return (
         <div style={card}>
             <p style={eyebrow}>Competitive Density</p>
+            <p style={{ fontSize: 9, color: "rgba(126,144,184,0.5)", margin: "0 0 8px" }}>Click a competitor to highlight</p>
             <div style={{ display: "flex", justifyContent: "center" }}>
                 <svg width={W} height={H} overflow="visible">
-                    <circle cx={cx} cy={cy} r="22" fill="rgba(56,189,248,0.12)" stroke="rgba(56,189,248,0.5)" strokeWidth="1.5" />
-                    <text x={cx} y={cy + 1} textAnchor="middle" dominantBaseline="middle" fontSize="9" fill="#38bdf8" fontFamily="Inter,sans-serif" fontWeight="600">YOUR IDEA</text>
+                    {/* Colored connection lines — per competitor */}
                     {entries.map((c, i) => {
                         const rad = (angles[i] - 90) * (Math.PI / 180);
-                        const r = 56 + (i % 2) * 12;
+                        const r = 72 + (i % 2) * 16;
                         const bx = cx + r * Math.cos(rad), by = cy + r * Math.sin(rad);
-                        const bs = 14 + sigStr(c) * 16;
-                        const col = BUBBLE_COLORS[i % BUBBLE_COLORS.length];
+                        const isSelected = selected === c.name;
+                        const col = isSelected ? GREEN_BUBBLE : BUBBLE_PALETTE[i % BUBBLE_PALETTE.length];
                         return (
-                            <g key={c.name}>
-                                <line x1={cx} y1={cy} x2={bx} y2={by} stroke="rgba(99,120,170,0.2)" strokeWidth="1" strokeDasharray="3 3" />
-                                <circle cx={bx} cy={by} r={bs} fill={`${col}18`} stroke={`${col}88`} strokeWidth="1.2" />
-                                <text x={bx} y={by} textAnchor="middle" dominantBaseline="middle" fontSize="7.5" fill="rgba(200,215,240,0.85)" fontFamily="Inter,sans-serif" fontWeight="600">{c.name.split(" ")[0]}</text>
+                            <line key={`line-${c.name}`}
+                                x1={cx} y1={cy} x2={bx} y2={by}
+                                stroke={col.line}
+                                strokeWidth={isSelected ? "2" : "1.2"}
+                                strokeDasharray={isSelected ? undefined : "5 3"}
+                                opacity={selected && !isSelected ? 0.15 : 1}
+                                style={{ transition: "all 0.3s" }}
+                            />
+                        );
+                    })}
+
+                    {/* Center: YOUR IDEA */}
+                    <circle cx={cx} cy={cy} r="26" fill="rgba(56,189,248,0.1)" stroke="rgba(56,189,248,0.55)" strokeWidth="1.5"
+                        style={{ filter: "drop-shadow(0 0 8px rgba(56,189,248,0.25))" }} />
+                    <text x={cx} y={cy - 4} textAnchor="middle" dominantBaseline="middle" fontSize="8.5" fill="#38bdf8" fontFamily="Inter,sans-serif" fontWeight="700">YOUR</text>
+                    <text x={cx} y={cy + 7} textAnchor="middle" dominantBaseline="middle" fontSize="8.5" fill="#38bdf8" fontFamily="Inter,sans-serif" fontWeight="700">IDEA</text>
+
+                    {/* Competitor bubbles */}
+                    {entries.map((c, i) => {
+                        const rad = (angles[i] - 90) * (Math.PI / 180);
+                        const r = 72 + (i % 2) * 16;
+                        const bx = cx + r * Math.cos(rad), by = cy + r * Math.sin(rad);
+                        const bs = 20 + sigStr(c) * 14;
+                        const isSelected = selected === c.name;
+                        const col = isSelected ? GREEN_BUBBLE : BUBBLE_PALETTE[i % BUBBLE_PALETTE.length];
+                        return (
+                            <g key={c.name} onClick={() => setSelected(isSelected ? null : c.name)} style={{ cursor: "pointer" }}>
+                                {/* Outer glow ring when selected */}
+                                {isSelected && <circle cx={bx} cy={by} r={bs + 9} fill={`${col.base}18`} stroke={`${col.base}30`} strokeWidth="1" />}
+                                <circle cx={bx} cy={by} r={bs}
+                                    fill={isSelected ? col.fill : `${col.base}12`}
+                                    stroke={col.stroke}
+                                    strokeWidth={isSelected ? "2.5" : "1.5"}
+                                    opacity={selected && !isSelected ? 0.35 : 1}
+                                    style={{ transition: "all 0.3s", filter: isSelected ? `drop-shadow(0 0 10px ${col.base}80)` : "none" }}
+                                />
+                                <text x={bx} y={by} textAnchor="middle" dominantBaseline="middle"
+                                    fontSize="8" fill={isSelected ? col.base : "rgba(200,215,240,0.9)"}
+                                    fontFamily="Inter,sans-serif" fontWeight={isSelected ? "700" : "600"}
+                                    opacity={selected && !isSelected ? 0.35 : 1}
+                                    style={{ transition: "all 0.3s" }}>
+                                    {c.name.split(" ")[0]}
+                                </text>
                             </g>
                         );
                     })}

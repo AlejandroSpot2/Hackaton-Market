@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Manrope } from "next/font/google";
+import { ThemeProvider } from "@/lib/theme";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 import "reactflow/dist/style.css";
 import "./globals.css";
@@ -25,7 +27,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${manrope.variable} ${fraunces.variable} font-sans`}>
-        {children}
+        <ThemeProvider>
+          {children}
+          <ThemeToggle />
+        </ThemeProvider>
       </body>
     </html>
   );
