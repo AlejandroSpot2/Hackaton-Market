@@ -36,7 +36,7 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
         const [st, rec] = await Promise.all([fetchRunStatus(runId), fetchRunResult(runId)]);
         if (!mounted) return;
         setStatusData(st); setRecord(rec); setError(null);
-        const nodes = rec.result?.atlas.nodes ?? [];
+        const nodes = rec.result?.atlas?.nodes ?? [];
         if (nodes.length) setSelectedNodeId((c) => (c && nodes.some((n) => n.id === c) ? c : nodes[0].id));
         if (st.status === "complete" || st.status === "failed") window.clearInterval(iv);
       } catch (e) { if (mounted) setError(e instanceof Error ? e.message : "Poll error."); }
@@ -49,10 +49,13 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
   const result = record?.result ?? null;
   const status = statusData?.status ?? record?.status ?? "queued";
   const progressMessage = statusData?.progress_message ?? null;
-  const selectedNode = result?.atlas.nodes.find((n) => n.id === selectedNodeId) ?? null;
-  const selectedDetail = selectedNode ? result?.competitor_details[selectedNode.id] ?? null : null;
+  const atlas = result?.atlas ?? null;
+  const competitors = result?.competitor_details ?? {};
+  const pulse = result?.pulse ?? null;
+  const selectedNode = atlas?.nodes.find((n) => n.id === selectedNodeId) ?? null;
+  const selectedDetail = selectedNode ? competitors[selectedNode.id] ?? null : null;
   const isLoading = status === "queued" || status === "running";
-  const competitorNames = Object.values(result?.competitor_details ?? {}).map((c) => c.name);
+  const competitorNames = Object.values(competitors).map((c) => c.name);
 
   return (
     <div style={S.page}>
@@ -95,53 +98,53 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
                 </div>
                 <p style={{ fontSize: 10, ...S.muted, margin: 0 }}>Click node · Drag to rearrange</p>
               </div>
-              <AtlasCanvas atlas={result?.atlas ?? null} selectedNodeId={selectedNodeId} onSelectNode={setSelectedNodeId} isLoading={isLoading} />
+              <AtlasCanvas atlas={atlas} selectedNodeId={selectedNodeId} onSelectNode={setSelectedNodeId} isLoading={isLoading} />
             </div>
             <DetailPanel node={selectedNode} detail={selectedDetail} />
           </div>
 
           {/* Charts */}
-          {result && (
+          {pulse && (
             <>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
                 {/* Pulse */}
                 <div style={{ ...S.card, padding: 20 }}>
                   <p style={{ ...S.eyebrow, color: "rgba(245,158,11,0.7)", margin: "0 0 4px" }}>Market Pulse</p>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", lineHeight: 1.5, margin: "8px 0 0" }}>{result.pulse.summary}</p>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", lineHeight: 1.5, margin: "8px 0 0" }}>{pulse.summary}</p>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12, padding: 12, borderRadius: 12, background: "rgba(0,0,0,0.2)" }}>
                     <div>
                       <p style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", ...S.muted, margin: 0 }}>Temperature</p>
-                      <p style={{ fontSize: 14, fontWeight: 700, margin: "4px 0 0", color: result.pulse.market_temperature === "heated" ? "#f97316" : result.pulse.market_temperature === "warm" ? "#f59e0b" : "#38bdf8" }}>
-                        {result.pulse.market_temperature}
+                      <p style={{ fontSize: 14, fontWeight: 700, margin: "4px 0 0", color: pulse.market_temperature === "heated" ? "#f97316" : pulse.market_temperature === "warm" ? "#f59e0b" : "#38bdf8" }}>
+                        {pulse.market_temperature}
                       </p>
                     </div>
                     <div>
                       <p style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", ...S.muted, margin: 0 }}>Competition</p>
-                      <p style={{ fontSize: 14, fontWeight: 700, margin: "4px 0 0", color: result.pulse.competition_level === "high" ? "#f87171" : result.pulse.competition_level === "medium" ? "#f59e0b" : "#22c55e" }}>
-                        {result.pulse.competition_level}
+                      <p style={{ fontSize: 14, fontWeight: 700, margin: "4px 0 0", color: pulse.competition_level === "high" ? "#f87171" : pulse.competition_level === "medium" ? "#f59e0b" : "#22c55e" }}>
+                        {pulse.competition_level}
                       </p>
                     </div>
                   </div>
                   <div style={{ marginTop: 12 }}>
                     <p style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "#38bdf8", margin: "0 0 4px" }}>Whitespace</p>
-                    <p style={{ fontSize: 11, ...S.muted, lineHeight: 1.5, margin: 0 }}>{result.pulse.whitespace}</p>
+                    <p style={{ fontSize: 11, ...S.muted, lineHeight: 1.5, margin: 0 }}>{pulse.whitespace}</p>
                   </div>
                 </div>
-                <SentimentGauge temperature={result.pulse.market_temperature} competitionLevel={result.pulse.competition_level} />
-                <RadarChart pulse={result.pulse} competitorNames={competitorNames} />
+                <SentimentGauge temperature={pulse.market_temperature} competitionLevel={pulse.competition_level} />
+                <RadarChart pulse={pulse} competitorNames={competitorNames} />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                <MarketBubbleChart competitors={result.competitor_details} />
+                <MarketBubbleChart competitors={competitors} />
                 {/* Metrics */}
                 <div style={{ ...S.card, padding: 20 }}>
                   <p style={{ ...S.eyebrow, ...S.muted, margin: "0 0 16px" }}>Atlas Metrics</p>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                     {[
-                      { label: "Atlas Nodes", val: result.atlas.nodes.length, col: "#38bdf8" },
-                      { label: "Competitors", val: Object.keys(result.competitor_details).length, col: "#22c55e" },
-                      { label: "Atlas Edges", val: result.atlas.edges.length, col: "#a78bfa" },
-                      { label: "Sources", val: result.sources?.length ?? 0, col: "#f59e0b" },
+                      { label: "Atlas Nodes", val: atlas?.nodes.length ?? 0, col: "#38bdf8" },
+                      { label: "Competitors", val: Object.keys(competitors).length, col: "#22c55e" },
+                      { label: "Atlas Edges", val: atlas?.edges.length ?? 0, col: "#a78bfa" },
+                      { label: "Sources", val: result?.sources?.length ?? 0, col: "#f59e0b" },
                     ].map(({ label, val, col }) => (
                       <div key={label} style={{ background: "rgba(0,0,0,0.2)", borderRadius: 12, padding: 12 }}>
                         <p style={{ fontSize: 28, fontWeight: 800, color: col, margin: 0 }}>{val}</p>
@@ -152,15 +155,15 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
                 </div>
               </div>
 
-              <CompetitorCards competitors={result.competitor_details} onSelect={setSelectedNodeId} selectedId={selectedNodeId} />
+              <CompetitorCards competitors={competitors} onSelect={setSelectedNodeId} selectedId={selectedNodeId} />
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                <SummaryCard title="Brutal Truth" card={result.brutal_truth} fallback="Synthesis available at completion." variant="brutal" />
-                <SummaryCard title="Opportunity" card={result.opportunity} fallback="Opportunity framing available at completion." variant="opportunity" />
+                <SummaryCard title="Brutal Truth" card={result?.brutal_truth ?? null} fallback="Synthesis available at completion." variant="brutal" />
+                <SummaryCard title="Opportunity" card={result?.opportunity ?? null} fallback="Opportunity framing available at completion." variant="opportunity" />
               </div>
 
               {/* Sources */}
-              {result.sources?.length > 0 && (
+              {(result?.sources?.length ?? 0) > 0 && (
                 <div style={{ ...S.card, padding: 20 }}>
                   <p style={{ ...S.eyebrow, ...S.muted, margin: "0 0 12px" }}>Research Sources</p>
                   <table style={{ width: "100%", fontSize: 11, borderCollapse: "collapse" }}>
@@ -171,7 +174,7 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
                       </tr>
                     </thead>
                     <tbody>
-                      {result.sources.map((s, i) => (
+                      {(result?.sources ?? []).map((s, i) => (
                         <tr key={s} style={{ borderBottom: "1px solid rgba(255,255,255,0.03)" }}>
                           <td style={{ padding: "8px 0", ...S.muted }}>{i + 1}</td>
                           <td style={{ padding: "8px 0" }}>
@@ -192,15 +195,15 @@ export function RunWorkspace({ runId }: RunWorkspaceProps) {
                   background: "linear-gradient(135deg, rgba(120,80,0,0.08), rgba(7,15,28,0.97))",
                 }}>
                   <p style={{ ...S.eyebrow, color: "#f59e0b", margin: "0 0 8px" }}>🏁 Final Summary</p>
-                  <h2 style={{ margin: "0 0 12px", fontSize: 18, fontWeight: 800, color: "#eef2ff" }}>{result.pulse.idea}</h2>
-                  <p style={{ fontSize: 13, ...S.muted, lineHeight: 1.65, margin: 0 }}>{result.pulse.summary}</p>
-                  <p style={{ fontSize: 13, ...S.muted, lineHeight: 1.65, margin: "8px 0 0" }}>{result.pulse.whitespace}</p>
+                  <h2 style={{ margin: "0 0 12px", fontSize: 18, fontWeight: 800, color: "#eef2ff" }}>{pulse?.idea ?? record?.idea ?? ""}</h2>
+                  <p style={{ fontSize: 13, ...S.muted, lineHeight: 1.65, margin: 0 }}>{pulse?.summary ?? ""}</p>
+                  <p style={{ fontSize: 13, ...S.muted, lineHeight: 1.65, margin: "8px 0 0" }}>{pulse?.whitespace ?? ""}</p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
                     {[
-                      { label: `🌡️ ${result.pulse.market_temperature} market`, bc: "rgba(245,158,11,0.15)", tc: "#f59e0b" },
-                      { label: `⚔️ ${result.pulse.competition_level} competition`, bc: "rgba(248,113,113,0.12)", tc: "#f87171" },
-                      { label: `${Object.keys(result.competitor_details).length} competitors`, bc: "rgba(34,197,94,0.12)", tc: "#22c55e" },
-                      { label: `${result.atlas.nodes.length} atlas nodes`, bc: "rgba(56,189,248,0.12)", tc: "#38bdf8" },
+                      { label: `🌡️ ${pulse?.market_temperature ?? ""} market`, bc: "rgba(245,158,11,0.15)", tc: "#f59e0b" },
+                      { label: `⚔️ ${pulse?.competition_level ?? ""} competition`, bc: "rgba(248,113,113,0.12)", tc: "#f87171" },
+                      { label: `${Object.keys(competitors).length} competitors`, bc: "rgba(34,197,94,0.12)", tc: "#22c55e" },
+                      { label: `${atlas?.nodes.length ?? 0} atlas nodes`, bc: "rgba(56,189,248,0.12)", tc: "#38bdf8" },
                     ].map(({ label, bc, tc }) => (
                       <span key={label} style={{ fontSize: 10, fontWeight: 600, padding: "4px 12px", borderRadius: 999, background: bc, color: tc }}>
                         {label}
