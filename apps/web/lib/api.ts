@@ -41,7 +41,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
-export function createRun(idea: string, demoMode = true): Promise<AnalyzeResponse> {
+export function createRun(idea: string, demoMode = false): Promise<AnalyzeResponse> {
   return request<AnalyzeResponse>("/analyze", {
     method: "POST",
     body: JSON.stringify({ idea, demo_mode: demoMode })

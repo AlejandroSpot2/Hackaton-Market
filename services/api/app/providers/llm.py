@@ -52,11 +52,13 @@ or adjacent_category node.
 - Set all position values to x:0 y:0 — they will be computed later.
 
 brutal_truth card tone:
+- title: must be exactly the string "Brutal Truth"
 - headline: one declarative sentence a founder would wince at. No softening.
 - body: the core structural problem in 2-4 sentences. State facts, no advice yet.
 - bullets: exactly 3 observations, each under 12 words.
 
 opportunity card tone:
+- title: must be exactly the string "Opportunity"
 - headline: forward-leaning framing of the most defensible market wedge.
 - body: explain the why in 2-4 sentences.
 - bullets: exactly 3 action directives, each starting with an imperative verb.\
@@ -80,11 +82,11 @@ def _format_exa_context(exa_results: list[dict]) -> str:
     return "\n\n".join(lines)
 
 
-def _call(client: OpenAI, system: str, user: str) -> dict:
+def _call(client: OpenAI, system: str, user: str, max_tokens: int = 8192) -> dict:
     response = client.chat.completions.create(
         model="google/gemini-3-flash-preview",
         temperature=0.2,
-        max_tokens=8192,
+        max_tokens=max_tokens,
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system},
@@ -93,7 +95,18 @@ def _call(client: OpenAI, system: str, user: str) -> dict:
     )
     raw = response.choices[0].message.content
     try:
-        return json.loads(raw)
+        # Strip markdown fences if present
+        text = raw.strip()
+        if text.startswith("```"):
+            text = text.split("\n", 1)[-1]  # drop opening fence line
+        if text.endswith("```"):
+            text = text.rsplit("```", 1)[0]
+        text = text.strip()
+        # Extract only the JSON object in case there is surrounding text
+        start = text.find("{")
+        end = text.rfind("}") + 1
+        json_str = text[start:end] if start != -1 and end > start else text
+        return json.loads(json_str)
     except (json.JSONDecodeError, TypeError):
         print(f"[llm] raw response: {raw}")
         raise ValueError("LLM returned invalid JSON — check raw response above")
@@ -177,7 +190,12 @@ Re-emit all existing atlas nodes plus new adjacent_category and opportunity node
 All new edges must reference valid node ids.\
 """
 
-    return _call(client, _DEEP_SYSTEM, user)
+    result = _call(client, _DEEP_SYSTEM, user, max_tokens=16000)
+    if result.get("brutal_truth") and "title" not in result["brutal_truth"]:
+        result["brutal_truth"]["title"] = "Brutal Truth"
+    if result.get("opportunity") and "title" not in result["opportunity"]:
+        result["opportunity"]["title"] = "Opportunity"
+    return result
 
 
 if __name__ == "__main__":

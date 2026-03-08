@@ -135,7 +135,7 @@ class RunRecord(BaseModel):
 
 class AnalyzeRequest(BaseModel):
     idea: str = Field(min_length=10, max_length=400)
-    demo_mode: bool = True
+    demo_mode: bool = False
 
 
 class AnalyzeResponse(BaseModel):
