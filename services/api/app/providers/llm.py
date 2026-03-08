@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import json
 
@@ -25,9 +25,9 @@ No spaces, no hyphens, no special characters.
 - Always include exactly one node with id "idea" and type "idea".
 - brutal_truth must be null.
 - opportunity must be null.
-- Set all position values to x:0 y:0 — they will be computed later.
+- Set all position values to x:0 y:0 â€” they will be computed later.
 
-VALID ENUM VALUES — use these exact strings, nothing else:
+VALID ENUM VALUES â€” use these exact strings, nothing else:
 - node type: "idea", "competitor", "segment", "adjacent_category", "opportunity"
 - edge type: "competes_with", "belongs_to_segment", "adjacent_to", "opportunity_in"
 - market_temperature: "cold", "warm", "heated"
@@ -49,7 +49,7 @@ RULES:
 or adjacent_category node.
 - Keep all existing node ids exactly as they are.
 - New nodes follow the same lowercase underscore slug rules.
-- Set all position values to x:0 y:0 — they will be computed later.
+- Set all position values to x:0 y:0 â€” they will be computed later.
 
 brutal_truth card tone:
 - headline: one declarative sentence a founder would wince at. No softening.
@@ -76,7 +76,7 @@ def _format_exa_context(exa_results: list[dict]) -> str:
     lines = []
     for i, r in enumerate(exa_results):
         snippet = r.get("snippet") or r.get("text") or ""
-        lines.append(f"[{i + 1}] {r.get('title', '')} — {r.get('url', '')}\n{snippet}")
+        lines.append(f"[{i + 1}] {r.get('title', '')} â€” {r.get('url', '')}\n{snippet}")
     return "\n\n".join(lines)
 
 
@@ -93,11 +93,20 @@ def _call(client: OpenAI, system: str, user: str) -> dict:
     )
     raw = response.choices[0].message.content
     try:
-        return json.loads(raw)
+        # Strip markdown fences if present
+        text = raw.strip()
+        if text.startswith("```"):
+            text = text.split("\n", 1)[-1]
+            text = text[:text.rfind("```")]
+        # Extract JSON object
+        start = text.find("{")
+        end = text.rfind("}") + 1
+        if start != -1 and end > start:
+            text = text[start:end]
+        return json.loads(text)
     except (json.JSONDecodeError, TypeError):
         print(f"[llm] raw response: {raw}")
         raise ValueError("LLM returned invalid JSON — check raw response above")
-
 
 def generate_pulse(idea: str, exa_results: list[dict]) -> dict:
     client = _make_client()
@@ -183,3 +192,4 @@ All new edges must reference valid node ids.\
 if __name__ == "__main__":
     result = generate_pulse("AI coding assistant for mobile developers", [])
     print(json.dumps(result, indent=2))
+

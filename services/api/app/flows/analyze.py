@@ -14,6 +14,14 @@ from ..utils.layout import assign_positions
 logger = logging.getLogger(__name__)
 
 
+def _inject_title(card):
+    if card is None:
+        return None
+    if "title" not in card:
+        card["title"] = card.get("headline", "")
+    return card
+
+
 def start_analysis_flow(run_id: str, idea: str, demo_mode: bool) -> None:
     """Entry point called by routes/runs.py. Spawns thread, returns immediately."""
     target = _run_demo if demo_mode else _run_live
@@ -54,32 +62,27 @@ def _run_demo(run_id: str, idea: str) -> None:
 
 def _run_live(run_id: str, idea: str) -> None:
     try:
-        # Step 1: mark running
         run_store.update(
             run_id,
             status="running",
             progress_message="Scanning market landscape...",
         )
 
-        # Step 2: Exa search
         logger.info("[live flow] searching competitors for: %s", idea)
         exa_results = exa_provider.search_competitors(idea)
         logger.info("[live flow] got %d exa results", len(exa_results))
 
-        # Step 3: pulse progress update
         run_store.update(run_id, progress_message="Generating market pulse...")
 
-        # Step 4: LLM pulse
         logger.info("[live flow] calling generate_pulse")
         pulse_dict = llm_provider.generate_pulse(idea, exa_results)
 
-        # Step 5: assign positions to pulse atlas nodes
         pulse_dict["atlas"]["nodes"] = assign_positions(pulse_dict["atlas"]["nodes"])
+        pulse_dict["brutal_truth"] = _inject_title(pulse_dict.get("brutal_truth"))
+        pulse_dict["opportunity"] = _inject_title(pulse_dict.get("opportunity"))
 
-        # Step 6: validate against Pydantic model
         pulse_result = RunResult.model_validate(pulse_dict)
 
-        # Step 7: write pulse_ready
         run_store.update(
             run_id,
             status="pulse_ready",
@@ -87,22 +90,17 @@ def _run_live(run_id: str, idea: str) -> None:
             result=pulse_result,
         )
 
-        # Step 8: deep insights progress update
         run_store.update(run_id, progress_message="Synthesizing deep insights...")
 
-        # Step 9: LLM deep insights
         logger.info("[live flow] calling generate_deep_insights")
         complete_dict = llm_provider.generate_deep_insights(idea, pulse_dict, exa_results)
 
-        # Step 10: assign positions to final atlas nodes
-        complete_dict["atlas"]["nodes"] = assign_positions(
-            complete_dict["atlas"]["nodes"]
-        )
+        complete_dict["atlas"]["nodes"] = assign_positions(complete_dict["atlas"]["nodes"])
+        complete_dict["brutal_truth"] = _inject_title(complete_dict.get("brutal_truth"))
+        complete_dict["opportunity"] = _inject_title(complete_dict.get("opportunity"))
 
-        # Step 11: validate
         complete_result = RunResult.model_validate(complete_dict)
 
-        # Step 12: write complete
         run_store.update(
             run_id,
             status="complete",
